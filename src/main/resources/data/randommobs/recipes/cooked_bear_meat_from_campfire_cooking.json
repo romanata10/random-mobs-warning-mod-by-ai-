@@ -3,7 +3,7 @@
   "ingredient": {
     "item": "randommobs:bear_meat"
   },
-  "result": "cooked_bear_meat",
+  "result": "randommobs:cooked_bear_meat",
   "experience": 0.35,
   "cookingtime": 600
 }

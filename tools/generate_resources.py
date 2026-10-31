@@ -289,15 +289,15 @@ def recipes():
     for result, ingredient in SMELTING.items():
         write(os.path.join(DATA, "recipes", result + "_from_smelting.json"), {
             "type": "minecraft:smelting", "ingredient": {"item": ingredient},
-            "result": result, "experience": 0.35, "cookingtime": 200,
+            "result": "randommobs:" + result, "experience": 0.35, "cookingtime": 200,
         })
         write(os.path.join(DATA, "recipes", result + "_from_smoking.json"), {
             "type": "minecraft:smoking", "ingredient": {"item": ingredient},
-            "result": result, "experience": 0.35, "cookingtime": 100,
+            "result": "randommobs:" + result, "experience": 0.35, "cookingtime": 100,
         })
         write(os.path.join(DATA, "recipes", result + "_from_campfire_cooking.json"), {
             "type": "minecraft:campfire_cooking", "ingredient": {"item": ingredient},
-            "result": result, "experience": 0.35, "cookingtime": 600,
+            "result": "randommobs:" + result, "experience": 0.35, "cookingtime": 600,
         })
 
 
