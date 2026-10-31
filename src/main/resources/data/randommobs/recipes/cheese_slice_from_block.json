@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "randommobs:cheese_block"
+    }
+  ],
+  "result": {
+    "item": "randommobs:cheese_slice",
+    "count": 4
+  }
+}

@@ -433,9 +433,246 @@ def build_structures():
                                     "minecraft:taiga", "minecraft:forest", "randommobs:scorched_plains"],
                    64, 24, 61893)
 
+    build_city_structure()
+    build_military_structure()
+    build_oil_rig_structure()
+
     # tripod crash json last (needs the nbt first)
     structure_json("tripod_crash", ["minecraft:desert", "minecraft:plains", "minecraft:forest",
                                     "minecraft:savanna", "randommobs:scorched_plains"], 38, 14, 9107)
+
+
+
+def build_city_structure():
+    """A small city block: roads, sidewalks, three buildings and furniture inside."""
+    s = Structure("city_block/main", (29, 18, 29))
+    for x in range(29):
+        for z in range(29):
+            on_road_x = z in (12, 13, 14, 15, 16)
+            on_road_z = x in (12, 13, 14, 15, 16)
+            if on_road_x or on_road_z:
+                s.put(x, 0, z, "randommobs:road_block")
+                if (x * 7 + z * 3) % 11 == 0:
+                    s.put(x, 0, z, "minecraft:yellow_concrete")
+            else:
+                s.put(x, 0, z, "randommobs:sidewalk_block")
+            for y in range(1, 18):
+                s.put(x, y, z, "minecraft:air")
+
+    def building(x0, z0, w, d, height, floor_block, wall_block, accent):
+        for x in range(x0, x0 + w):
+            for z in range(z0, z0 + d):
+                s.put(x, 1, z, floor_block)
+                for y in range(2, 2 + height):
+                    s.put(x, y, z, "minecraft:air")
+        for x in range(x0, x0 + w):
+            for z in range(z0, z0 + d):
+                edge = x in (x0, x0 + w - 1) or z in (z0, z0 + d - 1)
+                if not edge:
+                    continue
+                for y in range(2, 2 + height):
+                    s.put(x, y, z, wall_block)
+        for x in range(x0, x0 + w):
+            for z in range(z0, z0 + d):
+                s.put(x, 2 + height, z, accent)
+        # windows
+        for y in range(3, 2 + height, 2):
+            for x in range(x0 + 1, x0 + w - 1, 2):
+                s.put(x, y, z0, "randommobs:reinforced_glass")
+                s.put(x, y, z0 + d - 1, "randommobs:reinforced_glass")
+            for z in range(z0 + 1, z0 + d - 1, 2):
+                s.put(x0, y, z, "randommobs:reinforced_glass")
+                s.put(x0 + w - 1, y, z, "randommobs:reinforced_glass")
+        # locked door in the middle of the south wall
+        door_x = x0 + w // 2
+        door_z = z0 + d - 1
+        s.put(door_x, 2, door_z, "randommobs:locked_door",
+              {"facing": "south", "half": "lower", "hinge": "left", "open": "false", "powered": "false"})
+        s.put(door_x, 1, door_z, "randommobs:locked_door",
+              {"facing": "south", "half": "upper", "hinge": "left", "open": "false", "powered": "false"})
+        return door_x, door_z
+
+    def table(x, z):
+        s.put(x, 2, z, "minecraft:oak_fence")
+        s.put(x, 3, z, "minecraft:oak_pressure_plate")
+
+    def chair(x, z, facing):
+        s.put(x, 2, z, "minecraft:oak_stairs", {"facing": facing, "half": "bottom", "shape": "straight",
+                                                "waterlogged": "false"})
+
+    def bed(x, z, facing):
+        s.put(x, 2, z, "minecraft:red_bed", {"facing": facing, "part": "foot", "occupied": "false"})
+        s.put(x, 2, z - 1 if facing == "north" else z + 1, "minecraft:red_bed",
+              {"facing": facing, "part": "head", "occupied": "false"})
+
+    # ---- building A: house with furniture ---------------------------------
+    dx, dz = building(2, 2, 9, 9, 4, "minecraft:oak_planks", "randommobs:reinforced_planks",
+                      "minecraft:dark_oak_slab")
+    bed(4, 3, "south")
+    table(7, 4)
+    chair(7, 5, "north")
+    chair(8, 4, "west")
+    s.put(3, 2, 7, "minecraft:bookshelf")
+    s.put(4, 2, 7, "minecraft:bookshelf")
+    s.put(3, 3, 7, "randommobs:tv")
+    s.put(9, 2, 3, "randommobs:casino")
+    s.put(6, 2, 3, "minecraft:chest")
+    s.put(5, 2, 3, "minecraft:crafting_table")
+    s.put(8, 2, 8, "randommobs:cheese_block")
+    s.put(2, 2, 3, "minecraft:glowstone")
+    s.entity(dx - 1, 2, dz - 1, "randommobs:hollow_neighbor")
+
+    # ---- building B: shop --------------------------------------------------
+    building(18, 2, 9, 9, 5, "minecraft:smooth_stone", "minecraft:stone_bricks", "minecraft:stone_brick_slab")
+    for x in range(19, 26):
+        s.put(x, 2, 9, "minecraft:stone_brick_wall")
+        s.put(x, 3, 9, "minecraft:barrel")
+    s.put(20, 2, 4, "minecraft:furnace")
+    s.put(21, 2, 4, "minecraft:smoker")
+    s.put(22, 2, 4, "minecraft:blast_furnace")
+    s.put(24, 2, 4, "randommobs:storm_siren")
+    s.put(19, 2, 6, "minecraft:chest")
+    s.put(25, 2, 6, "randommobs:glow_orb")
+    table(22, 6)
+    s.put(19, 5, 5, "minecraft:lantern")
+
+    # ---- building C: bunker ------------------------------------------------
+    building(2, 18, 9, 9, 4, "minecraft:polished_deepslate", "randommobs:tornado_bunker",
+             "minecraft:deepslate_tiles")
+    for x in range(3, 10):
+        for z in range(19, 26):
+            s.put(x, 2, z, "minecraft:polished_deepslate")
+    s.put(4, 3, 20, "minecraft:bed", {"facing": "south", "part": "foot", "occupied": "false"})
+    s.put(4, 3, 19, "minecraft:bed", {"facing": "south", "part": "head", "occupied": "false"})
+    s.put(8, 3, 23, "randommobs:storm_siren")
+    s.put(6, 3, 23, "minecraft:chest")
+    s.put(9, 3, 21, "minecraft:barrel")
+    s.put(3, 3, 24, "minecraft:lantern")
+
+    # ---- street lamps + trees ----------------------------------------------
+    for x, z in ((1, 1), (27, 1), (1, 27), (27, 27), (17, 17), (11, 11)):
+        s.put(x, 1, z, "minecraft:stone_brick_wall")
+        s.put(x, 2, z, "minecraft:stone_brick_wall")
+        s.put(x, 3, z, "randommobs:glow_orb")
+    for x, z in ((17, 3), (3, 17), (25, 17), (17, 25)):
+        s.put(x, 1, z, "minecraft:dirt")
+        s.put(x, 2, z, "minecraft:oak_log")
+        s.put(x, 3, z, "minecraft:oak_leaves")
+        s.put(x, 4, z, "minecraft:oak_leaves")
+
+    s.entity(14, 1, 6, "randommobs:chest_mimic")
+    s.entity(24, 1, 20, "randommobs:lights")
+    s.save()
+    structure_json("city_block", ["minecraft:plains", "minecraft:sunflower_plains", "minecraft:savanna"],
+                   110, 40, 74113)
+
+
+def build_military_structure():
+    s = Structure("military_base/main", (25, 12, 25))
+    for x in range(25):
+        for z in range(25):
+            s.put(x, 0, z, "randommobs:road_block" if (x // 4 + z // 4) % 2 else "minecraft:gray_concrete")
+            for y in range(1, 12):
+                s.put(x, y, z, "minecraft:air")
+    # perimeter fence
+    for x in range(25):
+        for z in range(25):
+            if x in (0, 24) or z in (0, 24):
+                s.put(x, 1, z, "minecraft:iron_bars")
+                s.put(x, 2, z, "minecraft:iron_bars")
+    # gate
+    for z in (12, 13):
+        s.put(12, 1, 24, "minecraft:air")
+        s.put(13, 1, 24, "minecraft:air")
+        s.put(12, 2, 24, "minecraft:air")
+        s.put(13, 2, 24, "minecraft:air")
+    # command post
+    for x in range(3, 11):
+        for z in range(3, 10):
+            s.put(x, 1, z, "minecraft:smooth_stone")
+            for y in range(2, 6):
+                s.put(x, y, z, "minecraft:air")
+            edge = x in (3, 10) or z in (3, 9)
+            for y in range(2, 5):
+                if edge:
+                    s.put(x, y, z, "minecraft:light_gray_concrete")
+            s.put(x, 5, z, "minecraft:gray_concrete")
+    s.put(6, 2, 9, "minecraft:iron_door", {"facing": "south", "half": "lower", "hinge": "left",
+                                           "open": "false", "powered": "false"})
+    s.put(6, 3, 9, "minecraft:iron_door", {"facing": "south", "half": "upper", "hinge": "left",
+                                           "open": "false", "powered": "false"})
+    s.put(4, 2, 4, "randommobs:storm_siren")
+    s.put(8, 2, 4, "minecraft:barrel")
+    s.put(9, 2, 4, "minecraft:chest")
+    s.put(5, 2, 5, "minecraft:crafting_table")
+    s.put(5, 3, 5, "minecraft:lantern")
+    # helipad
+    for x in range(16, 23):
+        for z in range(16, 23):
+            s.put(x, 1, z, "minecraft:gray_concrete")
+    s.put(19, 2, 19, "minecraft:white_concrete")
+    for dx, dz in ((-2, 0), (2, 0), (0, -2), (0, 2)):
+        s.put(19 + dx, 2, 19 + dz, "minecraft:white_concrete")
+    # fuel tanks
+    for x, z in ((18, 5), (21, 5)):
+        for y in range(1, 5):
+            s.put(x, y, z, "minecraft:iron_block")
+        s.put(x, 5, z, "minecraft:cauldron")
+    # crates
+    for x, z in ((16, 10), (17, 10), (18, 10), (16, 11)):
+        s.put(x, 1, z, "minecraft:barrel")
+    s.entity(20, 1, 12, "randommobs:tank")
+    s.entity(6, 2, 6, "randommobs:lights")
+    s.save()
+    structure_json("military_base", ["minecraft:plains", "minecraft:sunflower_plains",
+                                     "randommobs:scorched_plains", "minecraft:desert"], 90, 30, 52301)
+
+
+def build_oil_rig_structure():
+    s = Structure("oil_rig/main", (21, 22, 21))
+    for x in range(21):
+        for z in range(21):
+            for y in range(22):
+                s.put(x, y, z, "minecraft:air")
+    # stilts
+    for x in (1, 19):
+        for z in (1, 19):
+            for y in range(0, 12):
+                s.put(x, y, z, "minecraft:iron_block")
+    # main deck
+    for x in range(0, 21):
+        for z in range(0, 21):
+            s.put(x, 12, z, "minecraft:iron_block" if (x + z) % 5 else "minecraft:iron_bars")
+    # upper platform
+    for x in range(4, 17):
+        for z in range(4, 17):
+            s.put(x, 16, z, "minecraft:gray_concrete")
+    for x in range(4, 17):
+        for z in range(4, 17):
+            if x in (4, 16) or z in (4, 16):
+                s.put(x, 17, z, "minecraft:iron_bars")
+    # derrick
+    for y in range(17, 21):
+        s.put(10, y, 10, "minecraft:iron_bars")
+        s.put(10, y, 10, "minecraft:iron_block")
+    # cargo + machinery
+    for x, z in ((2, 2), (3, 2), (2, 3), (17, 2), (18, 3)):
+        s.put(x, 13, z, "minecraft:barrel")
+    s.put(9, 13, 3, "minecraft:furnace")
+    s.put(10, 13, 3, "minecraft:blast_furnace")
+    s.put(11, 13, 3, "minecraft:smoker")
+    s.put(17, 13, 17, "randommobs:storm_siren")
+    s.put(3, 13, 17, "randommobs:glow_orb")
+    s.put(13, 13, 9, "minecraft:lantern")
+    s.put(9, 17, 9, "minecraft:lantern")
+    for x in range(2, 6):
+        s.put(x, 13, 10, "minecraft:iron_bars")
+    s.entity(10, 17, 12, "randommobs:tank")
+    s.entity(10, 6, -4, "randommobs:warship")
+    s.save()
+    structure_json("oil_rig", ["minecraft:ocean", "minecraft:cold_ocean", "minecraft:lukewarm_ocean",
+                               "minecraft:warm_ocean", "minecraft:deep_ocean"], 120, 40, 33647,
+                   heightmap="OCEAN_FLOOR_WG", terrain="none")
 
 
 # --------------------------------------------------------------------------- biome modifiers
@@ -478,6 +715,26 @@ def biome_modifiers():
     add_spawns("spawns_swamp", ["minecraft:swamp", "minecraft:mangrove_swamp", "#minecraft:is_river"], [
         spawn("randommobs:woodcock", 12, 1, 3),
         spawn("randommobs:gardener", 5, 1, 1),
+    ])
+    add_spawns("spawns_storm_creatures", "#minecraft:is_overworld", [
+        spawn("randommobs:lights", 6, 1, 2),
+        spawn("randommobs:chest_mimic", 3, 1, 1),
+        spawn("randommobs:circuit", 3, 1, 1),
+        spawn("randommobs:lantern_wraith", 5, 1, 2),
+        spawn("randommobs:bog_wretch", 6, 1, 1),
+        spawn("randommobs:ash_hound", 6, 1, 2),
+        spawn("randommobs:cloud_ray", 4, 1, 1),
+        spawn("randommobs:hollow_neighbor", 3, 1, 1),
+        spawn("randommobs:siren_head", 1, 1, 1),
+    ])
+    add_spawns("spawns_water_grabber", "#minecraft:is_ocean", [
+        spawn("randommobs:water_grabber", 8, 1, 1),
+    ])
+    add_spawns("spawns_warship", ["minecraft:deep_ocean", "minecraft:deep_cold_ocean"], [
+        spawn("randommobs:warship", 1, 1, 1),
+    ])
+    add_spawns("spawns_tank", ["randommobs:scorched_plains", "minecraft:desert"], [
+        spawn("randommobs:tank", 2, 1, 1),
     ])
     write(os.path.join(DATA, "forge/biome_modifier/red_roots_jungle.json"), {
         "type": "forge:add_features",

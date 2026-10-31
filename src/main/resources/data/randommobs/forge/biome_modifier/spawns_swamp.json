@@ -1,6 +1,10 @@
 {
   "type": "forge:add_spawns",
-  "biomes": "minecraft:swamp",
+  "biomes": [
+    "minecraft:swamp",
+    "minecraft:mangrove_swamp",
+    "#minecraft:is_river"
+  ],
   "spawners": [
     {
       "type": "randommobs:woodcock",

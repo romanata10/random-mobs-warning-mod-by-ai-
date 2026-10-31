@@ -259,6 +259,299 @@ def icon_shard(rng):
     return img
 
 
+
+# --------------------------------------------------------------------------- 1.1 textures
+def _fill(img, color):
+    d = ImageDraw.Draw(img)
+    d.rectangle([0, 0, img.width - 1, img.height - 1], fill=color)
+
+
+def tex_reinforced_planks(rng):
+    img, d = new_icon()
+    base = hx("#b98a4f")
+    _fill(img, base)
+    for y in range(0, 16, 4):
+        d.line([0, y, 15, y], fill=light(base, 0.72))
+        d.line([0, y + 1, 15, y + 1], fill=light(base, 1.16))
+    for x in (4, 11):
+        d.rectangle([x, 0, x, 15], fill=light(base, 0.8))
+    for p in ((2, 2), (8, 6), (13, 10), (5, 13)):
+        d.point(p, fill=hx("#8d939b"))
+    noisy(img, rng, 8)
+    return img
+
+
+def tex_reinforced_glass(rng):
+    img, d = new_icon()
+    _fill(img, hx("#a9d8e8"))
+    d.rectangle([0, 0, 15, 15], outline=hx("#7fb6c9"))
+    for i in range(0, 16, 5):
+        d.line([i, 0, 15, 16 - i], fill=hx("#d9f4ff"))
+    for p in ((3, 3), (12, 4), (4, 12), (11, 11)):
+        d.point(p, fill=hx("#5c7d8a"))
+    noisy(img, rng, 5)
+    return img
+
+
+def tex_fast_stairs(rng, part="side"):
+    img, d = new_icon()
+    base = hx("#8d8d8d")
+    _fill(img, base)
+    if part == "top":
+        d.polygon([(2, 13), (8, 4), (11, 13)], fill=hx("#e8f0f5"))
+        noisy(img, rng, 6)
+        return img
+    for y in range(2, 14, 4):
+        d.line([0, y, 15, y], fill=light(base, 0.75))
+    d.polygon([(3, 11), (8, 3), (12, 11)], fill=hx("#d9e4ea"))
+    noisy(img, rng, 6)
+    return img
+
+
+def tex_road(rng):
+    img, d = new_icon()
+    base = hx("#3a3a3e")
+    _fill(img, base)
+    for _ in range(60):
+        x, y = rng.randint(0, 15), rng.randint(0, 15)
+        d.point((x, y), fill=light(base, rng.uniform(0.7, 1.5)))
+    d.rectangle([7, 0, 8, 15], fill=hx("#e6d98a"))
+    noisy(img, rng, 5)
+    return img
+
+
+def tex_sidewalk(rng):
+    img, d = new_icon()
+    base = hx("#b0b0ad")
+    _fill(img, base)
+    d.line([0, 7, 15, 7], fill=light(base, 0.78))
+    d.line([7, 0, 7, 15], fill=light(base, 0.78))
+    d.line([0, 8, 15, 8], fill=light(base, 1.16))
+    d.line([8, 0, 8, 15], fill=light(base, 1.16))
+    noisy(img, rng, 6)
+    return img
+
+
+def tex_locked_door(rng, part="bottom"):
+    img, d = new_icon()
+    base = hx("#8a5a30")
+    _fill(img, base)
+    for x in (2, 13):
+        d.line([x, 0, x, 15], fill=light(base, 0.75))
+        d.line([x + 1, 0, x + 1, 15], fill=light(base, 1.15))
+    if part == "top":
+        d.rectangle([4, 3, 11, 9], fill=hx("#5a3a1e"))
+        for x in range(5, 11, 2):
+            d.line([x, 3, x, 9], fill=hx("#2b1a0c"))
+    for y in (4, 11):
+        d.rectangle([4, y, 11, y], fill=light(base, 0.7))
+    d.ellipse([6, 7, 9, 10], fill=hx("#e0c46a"))
+    d.point((7, 8), fill=hx("#fff4c2"))
+    noisy(img, rng, 6)
+    return img
+
+
+def tex_cheese(rng):
+    img, d = new_icon()
+    base = hx("#e8c14a")
+    _fill(img, base)
+    for cx, cy, r in ((3, 4, 2), (11, 6, 2), (6, 12, 2), (13, 13, 1)):
+        d.ellipse([cx - r, cy - r, cx + r, cy + r], fill=hx("#c79c2c"))
+    noisy(img, rng, 6)
+    return img
+
+
+def tex_siren(rng):
+    img, d = new_icon()
+    base = hx("#8f949a")
+    _fill(img, base)
+    d.rectangle([0, 0, 15, 3], fill=hx("#5c6167"))
+    d.rectangle([2, 5, 13, 14], fill=hx("#b23a2a"))
+    for y in range(6, 14, 2):
+        d.line([3, y, 12, y], fill=hx("#e05a42"))
+    d.rectangle([5, 6, 10, 12], fill=hx("#ffd166"))
+    noisy(img, rng, 6)
+    return img
+
+
+def tex_glow_orb(rng):
+    img, d = new_icon()
+    _fill(img, hx("#f7fbff"))
+    d.ellipse([0, 0, 15, 15], fill=hx("#ffffff"))
+    d.ellipse([2, 2, 13, 13], fill=hx("#eaf6ff"))
+    d.ellipse([4, 4, 10, 10], fill=hx("#ffffff"))
+    noisy(img, rng, 3)
+    return img
+
+
+def tex_bunker(rng):
+    img, d = new_icon()
+    base = hx("#4c5257")
+    _fill(img, base)
+    for y in range(0, 16, 4):
+        d.line([0, y, 15, y], fill=light(base, 0.7))
+    d.rectangle([0, 0, 15, 0], fill=light(base, 1.3))
+    for p in ((2, 2), (7, 2), (12, 2), (4, 7), (10, 7), (6, 12), (13, 12)):
+        d.rectangle([p[0], p[1], p[0] + 1, p[1] + 1], fill=hx("#9aa4ab"))
+    noisy(img, rng, 5)
+    return img
+
+
+def tex_casino(rng):
+    img, d = new_icon()
+    base = hx("#3a1245")
+    _fill(img, base)
+    d.rectangle([0, 0, 15, 2], fill=hx("#8b2fa8"))
+    d.rectangle([0, 13, 15, 15], fill=hx("#8b2fa8"))
+    d.ellipse([5, 5, 10, 10], fill=hx("#e0c46a"))
+    d.point((7, 7), fill=hx("#fff4c2"))
+    for p in ((1, 4), (14, 4), (1, 11), (14, 11)):
+        d.point(p, fill=hx("#ff7ae0"))
+    noisy(img, rng, 6)
+    return img
+
+
+def tex_tv(rng, part="side"):
+    img, d = new_icon()
+    if part == "screen":
+        _fill(img, hx("#0d1a1a"))
+        for y in range(0, 16, 2):
+            d.line([0, y, 15, y], fill=hx("#1d3535"))
+        d.rectangle([2, 3, 13, 11], fill=hx("#123b33"))
+        d.line([3, 5, 12, 5], fill=hx("#4ef0c0"))
+        d.line([3, 8, 10, 8], fill=hx("#2fa88a"))
+        return img
+    base = hx("#4a3f36")
+    _fill(img, base)
+    d.rectangle([0, 0, 15, 15], outline=hx("#2b241e"))
+    d.rectangle([12, 2, 14, 4], fill=hx("#c9c2b4"))
+    d.rectangle([12, 6, 14, 7], fill=hx("#7d7466"))
+    noisy(img, rng, 6)
+    return img
+
+
+def icon_lock_key(rng):
+    img, d = new_icon()
+    d.ellipse([2, 2, 8, 8], outline=hx("#d8c26a"), width=2)
+    d.line([7, 7, 13, 13], fill=hx("#d8c26a"), width=2)
+    d.line([10, 12, 12, 10], fill=hx("#d8c26a"), width=2)
+    noisy(img, rng, 8)
+    outline(img)
+    return img
+
+
+def icon_radio(rng):
+    img, d = new_icon()
+    d.rectangle([2, 4, 13, 13], fill=hx("#3f4a44"))
+    d.rectangle([4, 6, 9, 11], fill=hx("#9adfc0"))
+    d.rectangle([11, 6, 12, 11], fill=hx("#c9c2b4"))
+    d.line([9, 4, 13, 1], fill=hx("#9aa4a0"))
+    noisy(img, rng, 7)
+    outline(img)
+    return img
+
+
+def icon_weather_map(rng):
+    img, d = new_icon()
+    d.rectangle([1, 2, 14, 13], fill=hx("#d9e4ea"))
+    d.line([4, 4, 8, 7], fill=hx("#5a7a8c"))
+    d.line([8, 7, 11, 5], fill=hx("#5a7a8c"))
+    d.ellipse([8, 8, 13, 12], fill=hx("#7fb6c9"))
+    d.point((11, 10), fill=hx("#ffffff"))
+    noisy(img, rng, 6)
+    outline(img)
+    return img
+
+
+def icon_clock(rng):
+    img, d = new_icon()
+    d.ellipse([1, 1, 14, 14], fill=hx("#c9a53a"))
+    d.ellipse([3, 3, 12, 12], fill=hx("#f5f0dc"))
+    d.line([7, 4, 7, 8], fill=hx("#2b2b2b"))
+    d.line([7, 8, 11, 9], fill=hx("#2b2b2b"))
+    noisy(img, rng, 5)
+    outline(img)
+    return img
+
+
+def icon_bag(rng, base, label=None):
+    img, d = new_icon()
+    c = hx(base)
+    d.rectangle([2, 3, 13, 14], fill=c)
+    d.polygon([(2, 3), (13, 3), (11, 1), (4, 1)], fill=light(c, 1.2))
+    d.rectangle([3, 5, 12, 7], fill=light(c, 0.55))
+    if label:
+        d.rectangle([5, 8, 10, 12], fill=light(c, 1.35))
+    noisy(img, rng, 9)
+    outline(img)
+    return img
+
+
+def icon_cheese_slice(rng):
+    img, d = new_icon()
+    d.polygon([(2, 12), (14, 9), (12, 3), (4, 4)], fill=hx("#e8c14a"))
+    d.polygon([(4, 11), (12, 9), (11, 6), (5, 6)], fill=hx("#f2d878"))
+    for p in ((7, 8), (9, 7)):
+        d.point(p, fill=hx("#c79c2c"))
+    noisy(img, rng, 6)
+    outline(img)
+    return img
+
+
+def icon_bolt_lance(rng):
+    img, d = new_icon()
+    d.line([2, 14, 12, 3], fill=hx("#9aa4a0"), width=2)
+    d.polygon([(11, 1), (14, 4), (10, 5)], fill=hx("#e8f0f5"))
+    d.line([6, 9, 9, 11], fill=hx("#6a7470"))
+    d.point((13, 2), fill=hx("#8ce6ff"))
+    noisy(img, rng, 7)
+    outline(img)
+    return img
+
+
+def icon_track(rng):
+    img, d = new_icon()
+    for y in (3, 7, 11):
+        d.rectangle([1, y, 14, y + 2], fill=hx("#3b3f3a"))
+        for x in range(2, 14, 3):
+            d.rectangle([x, y, x + 1, y + 1], fill=hx("#7d857c"))
+    noisy(img, rng, 7)
+    outline(img)
+    return img
+
+
+def icon_circuit(rng):
+    img, d = new_icon()
+    d.rectangle([2, 2, 13, 13], fill=hx("#1d2b2b"))
+    for y in (5, 8, 11):
+        d.line([3, y, 12, y], fill=hx("#59ffd0"))
+    for x in (5, 9):
+        d.line([x, 3, x, 12], fill=hx("#2fa88a"))
+    d.rectangle([4, 6, 6, 8], fill=hx("#0c1414"))
+    noisy(img, rng, 4)
+    outline(img)
+    return img
+
+
+def icon_scale(rng):
+    img, d = new_icon()
+    d.polygon([(2, 11), (5, 3), (13, 2), (14, 10), (7, 13)], fill=hx("#8ca6b8"))
+    d.polygon([(4, 10), (6, 5), (11, 4), (11, 9), (7, 11)], fill=hx("#b9cfdd"))
+    noisy(img, rng, 7)
+    outline(img)
+    return img
+
+
+def icon_bulb(rng):
+    img, d = new_icon()
+    d.ellipse([3, 1, 12, 10], fill=hx("#c4463a"))
+    d.rectangle([5, 10, 10, 14], fill=hx("#8f949a"))
+    d.ellipse([5, 3, 9, 7], fill=hx("#ffb3a1"))
+    noisy(img, rng, 6)
+    outline(img)
+    return img
+
+
 # --------------------------------------------------------------------------- blocks
 def block_red_root_block(rng):
     img = Image.new("RGBA", (16, 16), hx("#5b2c18") + (255,))
@@ -390,6 +683,37 @@ def main():
     save(block_red_root_block(rng), BLOCK, "red_root_block")
     save(block_alien_metal(rng), BLOCK, "alien_metal_block")
     save(block_bloop_flesh(rng), BLOCK, "bloop_flesh_block")
+
+    save(icon_lock_key(rng), ITEM, "lock_key")
+    save(icon_radio(rng), ITEM, "storm_radio")
+    save(icon_weather_map(rng), ITEM, "weather_map")
+    save(icon_clock(rng), ITEM, "time_clock")
+    save(icon_bag(rng, "#c45a2a"), ITEM, "chips")
+    save(icon_bag(rng, "#d9a441", label=True), ITEM, "kirieshki")
+    save(icon_cheese_slice(rng), ITEM, "cheese_slice")
+    save(icon_bolt_lance(rng), ITEM, "bolt_lance")
+    save(icon_track(rng), ITEM, "tank_track")
+    save(icon_circuit(rng), ITEM, "circuit_fragment")
+    save(icon_scale(rng), ITEM, "storm_scale")
+    save(icon_bulb(rng), ITEM, "siren_bulb")
+    save(tex_locked_door(rng, "bottom"), ITEM, "locked_door")
+
+    save(tex_reinforced_planks(rng), BLOCK, "reinforced_planks")
+    save(tex_reinforced_glass(rng), BLOCK, "reinforced_glass")
+    save(tex_fast_stairs(rng, "side"), BLOCK, "fast_stairs_side")
+    save(tex_fast_stairs(rng, "top"), BLOCK, "fast_stairs_top")
+    save(tex_fast_stairs(rng, "side"), BLOCK, "fast_stairs_bottom")
+    save(tex_road(rng), BLOCK, "road_block")
+    save(tex_sidewalk(rng), BLOCK, "sidewalk_block")
+    save(tex_locked_door(rng, "bottom"), BLOCK, "locked_door_bottom")
+    save(tex_locked_door(rng, "top"), BLOCK, "locked_door_top")
+    save(tex_cheese(rng), BLOCK, "cheese_block")
+    save(tex_siren(rng), BLOCK, "storm_siren")
+    save(tex_glow_orb(rng), BLOCK, "glow_orb")
+    save(tex_bunker(rng), BLOCK, "tornado_bunker")
+    save(tex_casino(rng), BLOCK, "casino")
+    save(tex_tv(rng, "side"), BLOCK, "tv_side")
+    save(tex_tv(rng, "screen"), BLOCK, "tv_screen")
 
     save(effect_root_infection(rng), EFFECT, "root_infection")
     logo()

@@ -1,0 +1,21 @@
+{
+  "type": "forge:add_spawns",
+  "biomes": [
+    "#minecraft:is_taiga",
+    "#minecraft:is_forest"
+  ],
+  "spawners": [
+    {
+      "type": "randommobs:bear",
+      "weight": 14,
+      "minCount": 1,
+      "maxCount": 2
+    },
+    {
+      "type": "randommobs:woodcock",
+      "weight": 8,
+      "minCount": 1,
+      "maxCount": 2
+    }
+  ]
+}

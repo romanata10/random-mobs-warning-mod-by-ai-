@@ -1,6 +1,8 @@
 {
   "type": "forge:add_spawns",
-  "biomes": "minecraft:desert",
+  "biomes": [
+    "minecraft:desert"
+  ],
   "spawners": [
     {
       "type": "randommobs:sand_worm",

@@ -1,0 +1,14 @@
+{
+  "structures": [
+    {
+      "structure": "randommobs:oil_rig",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 120,
+    "separation": 40,
+    "salt": 33647
+  }
+}
