@@ -71,9 +71,88 @@ jobs:
 
             ### Установка
             1. Установите Forge 1.20.1 (47.2.0+).
-            2. Скопируйте `randommobs-1.0.0.jar` в папку `mods`.
+            2. Скопируйте скачанный `.jar` в папку `mods`.
             3. Запустите игру.
 
             Внутри: 13 мобов, 6 блоков, 19 предметов, эффект «заражение корней»,
             3 биома, 3 измерения, 4 структуры и 14 достижений.
+
+            ### 1.0.1
+            * Исправлен вылет при создании мира: биом-модификаторы Forge принимают только
+              один id/тег биома, а не список.
+            * Исправлены рецепты готовки (в `result` не хватало `randommobs:`), из-за которых
+              датапак не загружался и мир не создавался.
+            * В CI добавлен smoke-тест: выделенный сервер реально создаёт мир и должен дойти
+              до `Done (`.
           files: build/libs/*.jar
+
+  server-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Prepare run directory
+        run: |
+          mkdir -p run
+          echo "eula=true" > run/eula.txt
+          cat > run/server.properties <<'EOF'
+          online-mode=false
+          level-name=world
+          level-seed=1337
+          max-tick-time=-1
+          spawn-protection=0
+          view-distance=6
+          sync-chunk-writes=false
+          EOF
+
+      - name: Run dedicated server (world creation smoke test)
+        run: |
+          chmod +x ./gradlew
+          timeout -s KILL 480 ./gradlew runServer --no-daemon --console=plain > server-run.log 2>&1 || true
+          echo "gradle run finished"
+          ls -la run || true
+          ls -la run/logs || true
+
+      - name: Report server log as annotations
+        if: always()
+        run: |
+          set +e
+          LOG=server-run.log
+          if [ -f run/logs/latest.log ]; then cp run/logs/latest.log latest-server.log; LOG=latest-server.log; fi
+          echo "log: $LOG size $(wc -c < "$LOG" 2>/dev/null) bytes"
+          if [ -d run/crash-reports ]; then
+            for f in run/crash-reports/*; do
+              echo "::error title=CrashReport $(basename "$f")::$(head -c 8000 "$f" | tr '\n' '|' | sed 's/\r//g')"
+            done
+          fi
+          if [ -f "$LOG" ]; then
+            errs=$(grep -E "^> |^>> |Errors in element|Failed to parse|Not a JSON object|Unknown field|Couldn't parse|Caused by" "$LOG" | cut -c1-400 | tr '\n' '|')
+            echo "::error title=ParseErrors::$(echo "$errs" | cut -c1-55000)"
+            echo "::warning title=ServerStarted::$(grep -c 'Done (' "$LOG") times 'Done (' seen"
+            echo "::error title=ServerLogTail::$(tail -c 6000 "$LOG" | tr '\n' '|' | sed 's/\r//g')"
+          else
+            echo "::error title=NoLog::no server log produced"
+            echo "::error title=GradleLog::$(tail -c 6000 server-run.log | tr '\n' '|' | sed 's/\r//g')"
+          fi
+
+      - name: Assert the server started without datapack errors
+        run: |
+          set -e
+          LOG=server-run.log
+          if [ -f run/logs/latest.log ]; then LOG=run/logs/latest.log; fi
+          if grep -q "Failed to load datapacks" "$LOG"; then
+            echo "::error title=DatapackFailure::the mod's datapacks failed to load"
+            exit 1
+          fi
+          grep -q "Done (" "$LOG"
+          echo "server started fine"
