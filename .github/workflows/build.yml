@@ -124,15 +124,27 @@ jobs:
           echo "log: $LOG size $(wc -c < "$LOG" 2>/dev/null) bytes"
           if [ -d run/crash-reports ]; then
             for f in run/crash-reports/*; do
-              echo "::error title=CrashReport $(basename "$f")::$(head -c 5000 "$f" | tr '\n' '|' | sed 's/\r//g')"
+              echo "::error title=CrashReport $(basename "$f")::$(head -c 8000 "$f" | tr '\n' '|' | sed 's/\r//g')"
             done
           fi
           if [ -f "$LOG" ]; then
-            msg=$(grep -n -iE "Failed to load datapacks|Couldn't parse|Failed to parse|Caused by|Exception|Unknown field|error|Done \(" "$LOG" | head -n 60 | tr '\n' '|' | cut -c1-6000)
-            echo "::error title=ServerLogGrep::$msg"
-            echo "::error title=ServerLogTail::$(tail -c 5000 "$LOG" | tr '\n' '|' | sed 's/\r//g')"
+            errs=$(grep -E "^> |^>> |Errors in element|Failed to parse|Not a JSON object|Unknown field|Couldn't parse|Caused by" "$LOG" | cut -c1-400 | tr '\n' '|')
+            echo "::error title=ParseErrors::$(echo "$errs" | cut -c1-55000)"
+            echo "::warning title=ServerStarted::$(grep -c 'Done (' "$LOG") times 'Done (' seen"
+            echo "::error title=ServerLogTail::$(tail -c 6000 "$LOG" | tr '\n' '|' | sed 's/\r//g')"
           else
             echo "::error title=NoLog::no server log produced"
-            echo "::error title=GradleLog::$(tail -c 5000 server-run.log | tr '\n' '|' | sed 's/\r//g')"
+            echo "::error title=GradleLog::$(tail -c 6000 server-run.log | tr '\n' '|' | sed 's/\r//g')"
           fi
 
+      - name: Assert the server started without datapack errors
+        run: |
+          set -e
+          LOG=server-run.log
+          if [ -f run/logs/latest.log ]; then LOG=run/logs/latest.log; fi
+          if grep -q "Failed to load datapacks" "$LOG"; then
+            echo "::error title=DatapackFailure::the mod's datapacks failed to load"
+            exit 1
+          fi
+          grep -q "Done (" "$LOG"
+          echo "server started fine"
