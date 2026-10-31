@@ -20,3 +20,8 @@ src/generated/resources/
 *.log
 tools/_icons.png
 tools/__pycache__/
+
+# generated model previews (tools/render_preview.py) - keep only the contact sheets
+tools/preview/*
+!tools/preview/all_mobs.png
+!tools/preview/entity_textures.png

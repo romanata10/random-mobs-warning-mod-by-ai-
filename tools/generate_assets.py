@@ -41,11 +41,63 @@ def mix(a, b, t):
     return clamp(tuple(a[i] + (b[i] - a[i]) * t for i in range(3)))
 
 
+def _hash01(ix, iy, seed):
+    n = (ix * 374761393 + iy * 668265263 + seed * 2246822519) & 0xFFFFFFFF
+    n = ((n ^ (n >> 13)) * 1274126177) & 0xFFFFFFFF
+    return ((n ^ (n >> 16)) & 0xFFFF) / 65535.0
+
+
+def value_noise(x, y, seed=0, freq=4.0):
+    fx, fy = x / freq, y / freq
+    ix, iy = math.floor(fx), math.floor(fy)
+    tx, ty = fx - ix, fy - iy
+    sx, sy = tx * tx * (3.0 - 2.0 * tx), ty * ty * (3.0 - 2.0 * ty)
+    a = _hash01(ix, iy, seed)
+    b = _hash01(ix + 1, iy, seed)
+    c = _hash01(ix, iy + 1, seed)
+    d = _hash01(ix + 1, iy + 1, seed)
+    return (a * (1.0 - sx) + b * sx) * (1.0 - sy) + (c * (1.0 - sx) + d * sx) * sy
+
+
+def fbm(x, y, seed=0, freq=4.0, octaves=2):
+    total, amp, f, weight = 0.0, 1.0, freq, 0.0
+    for o in range(octaves):
+        total += value_noise(x, y, seed + o * 31, f) * amp
+        weight += amp
+        amp *= 0.5
+        f *= 2.1
+    return total / weight
+
+
+def boost(color, sat=1.18, lum=1.06):
+    """A little more punch: saturation up, brightness slightly up."""
+    r, g, b = color
+    grey = (r + g + b) / 3.0
+    r, g, b = (grey + (c - grey) * sat for c in (r, g, b))
+    return clamp((r * lum + 6, g * lum + 6, b * lum + 4))
+
+
+def tone(base, t):
+    """t in [-1, 1]: negative goes to a cool shadow, positive to a warm highlight."""
+    t = max(-1.0, min(1.0, t))
+    if t < 0:
+        shadow = (base[0] * 0.52 + 8, base[1] * 0.56 + 8, base[2] * 0.68 + 12)
+        return mix(base, shadow, -t)
+    light = (min(255, base[0] * 1.22 + 30), min(255, base[1] * 1.2 + 26), min(255, base[2] * 1.1 + 18))
+    return mix(base, light, t)
+
+
+def box_px(box):
+    """Integer texel size of a box's UV island."""
+    w = int(round((2 * box["d"] + 2 * box["w"]) * UV))
+    h = int(round((box["d"] + box["h"]) * UV))
+    return max(1, w), max(1, h)
+
+
 def pack(boxes, width):
     placed, x, y, shelf = [], 0, 0, 0
     for b in boxes:
-        w = (2 * b["d"] + 2 * b["w"]) * UV
-        h = (b["d"] + b["h"]) * UV
+        w, h = box_px(b)
         if x + w > width:
             x, y, shelf = 0, y + shelf + 1, 0
         placed.append((x, y, w, h))
@@ -66,7 +118,8 @@ def material_px(style, base, x, y, w, h, rng):
     """Returns a color for pixel (x,y) inside a face of size (w,h)."""
     t = y / max(h - 1, 1)
     if style == "metal":
-        c = shade(base, 1.06 - 0.14 * t)
+        grain = fbm(x, y, 11, 5.0)
+        c = tone(base, 0.24 - 0.5 * t + (grain - 0.5) * 0.28)
         if x % 6 == 0:
             c = shade(c, 0.9)
         if (x % 11 == 3) and (y % 9 == 4):
@@ -93,13 +146,13 @@ def material_px(style, base, x, y, w, h, rng):
             c = shade(c, 0.75)
         return shade(c, 1.0 + rng.uniform(-0.07, 0.07))
     if style == "chitin":
-        band = 0.86 + 0.18 * math.sin(y * 0.55)
-        c = shade(base, band)
+        band = 0.2 * math.sin(y * 0.5) + (fbm(x, y, 33, 6.0) - 0.5) * 0.3
+        c = tone(base, band + 0.1 - 0.35 * t)
         if y % 6 == 0:
             c = shade(c, 0.7)
         return shade(c, 1.0 + rng.uniform(-0.05, 0.05))
     if style == "flesh":
-        c = shade(base, 1.08 - 0.2 * t)
+        c = tone(base, 0.25 - 0.55 * t + (fbm(x, y, 41, 3.0) - 0.5) * 0.5)
         if rng.random() < 0.08:
             c = shade(c, 0.78)
         if rng.random() < 0.05:
@@ -109,7 +162,7 @@ def material_px(style, base, x, y, w, h, rng):
         d = math.hypot((x / max(w, 1)) - 0.5, (y / max(h, 1)) - 0.5)
         return shade(base, 1.16 - 0.5 * d + rng.uniform(-0.03, 0.03))
     if style == "fur":
-        c = shade(base, 1.0 + 0.1 * math.sin(y * 1.7 + x * 0.3))
+        c = tone(base, 0.18 - 0.3 * t + (fbm(x, y, 21, 2.4) - 0.5) * 0.7)
         if (x * 3 + y * 5) % 11 == 0:
             c = shade(c, 1.18)
         if (x + y) % 9 == 0:
@@ -135,7 +188,7 @@ def material_px(style, base, x, y, w, h, rng):
             c = shade(c, 0.82)
         return shade(c, 1.0 + rng.uniform(-0.04, 0.04))
     if style == "skin":
-        c = shade(base, 1.05 - 0.15 * t)
+        c = tone(base, 0.16 - 0.34 * t + (fbm(x, y, 53, 4.0) - 0.5) * 0.34)
         if (x * 7 + y * 3) % 23 == 0:
             c = shade(c, 0.88)
         return shade(c, 1.0 + rng.uniform(-0.03, 0.03))
@@ -158,7 +211,7 @@ def material_px(style, base, x, y, w, h, rng):
         c = shade(base, 1.0 + 0.08 * math.sin(x * 0.7 + y * 0.9))
         return shade(c, 1.0 + rng.uniform(-0.04, 0.04))
     if style == "wet":
-        c = shade(base, 1.1 - 0.3 * t)
+        c = tone(base, 0.3 - 0.6 * t + (fbm(x, y, 71, 2.6) - 0.5) * 0.4)
         if rng.random() < 0.06:
             c = shade(c, 1.4)
         return shade(c, 1.0 + rng.uniform(-0.06, 0.06))
@@ -168,7 +221,7 @@ def material_px(style, base, x, y, w, h, rng):
             c = shade(c, 0.86)
         return shade(c, 1.0 + rng.uniform(-0.04, 0.04))
     if style == "bone":
-        c = shade(base, 1.0 + 0.06 * math.sin(x * 0.8))
+        c = tone(base, 0.1 - 0.2 * t + (fbm(x, y, 61, 3.4) - 0.5) * 0.3)
         if (x * 5 + y * 3) % 29 == 0:
             c = shade(c, 0.8)
         return shade(c, 1.0 + rng.uniform(-0.03, 0.03))
@@ -182,8 +235,8 @@ def material_px(style, base, x, y, w, h, rng):
             c = mix(c, (150, 90, 50), 0.55)
         return c
     # noise / default
-    c = shade(base, 1.06 - 0.12 * t)
-    return shade(c, 1.0 + rng.uniform(-0.09, 0.09))
+    c = tone(base, 0.12 - 0.3 * t + (fbm(x, y, 91, 4.2) - 0.5) * 0.36)
+    return shade(c, 1.0 + rng.uniform(-0.03, 0.03))
 
 
 # --------------------------------------------------------------------------- faces
@@ -382,17 +435,12 @@ def draw_face(kind, draw, x0, y0, w, h, base, rng):
         return
 
 
-def paint_box(img, u, v, w, h, d, spec, rng):
-    base = hex_rgb(spec["color"])
-    style = spec.get("style", "noise")
-    face = spec.get("face")
-    glow = spec.get("glow", False)
-    px = img.load()
-
-    W, H = w * UV, h * UV
-    D = d * UV
-
-    faces = {
+def face_rects(u, v, w, h, d):
+    """Texture rectangle of every box face (down, up, west, north, east, south)."""
+    W = max(1, int(round(w * UV)))
+    H = max(1, int(round(h * UV)))
+    D = max(1, int(round(d * UV)))
+    return {
         "down": (u + D, v, W, D),
         "up": (u + D + W, v, W, D),
         "west": (u, v + D, D, H),
@@ -401,20 +449,44 @@ def paint_box(img, u, v, w, h, d, spec, rng):
         "south": (u + 2 * D + W, v + D, W, H),
     }
 
+
+def paint_box(img, u, v, w, h, d, spec, rng):
+    base = hex_rgb(spec["color"])
+    style = spec.get("style", "noise")
+    face = spec.get("face")
+    glow = spec.get("glow", False)
+    px = img.load()
+
+    faces = face_rects(u, v, w, h, d)
+
+    shiny = style in ("metal", "milmetal", "lens", "circuit", "wet", "storm")
+    seed = sum(ord(ch) for ch in style) * 7 + w * 13 + h * 3 + d
     for name, (fx, fy, fw, fh) in faces.items():
         if fw <= 0 or fh <= 0:
             continue
-        light = {"up": 1.12, "down": 0.74, "west": 0.9, "east": 0.9,
-                 "north": 1.0, "south": 0.84}[name]
+        light = {"up": 1.14, "down": 0.72, "west": 0.9, "east": 0.9,
+                 "north": 1.0, "south": 0.85}[name]
         for yy in range(fh):
             for xx in range(fw):
                 c = material_px(style, base, xx, yy, fw, fh, rng)
+                # rounded shading: darker towards the edges of the face
+                ex = min(xx, fw - 1 - xx) / max(1.0, fw * 0.18)
+                ey = min(yy, fh - 1 - yy) / max(1.0, fh * 0.18)
+                border = min(1.0, min(ex, ey))
+                c = shade(c, 0.8 + 0.2 * border)
+                # gentle vertical gradient on side faces
+                if name not in ("up", "down"):
+                    c = shade(c, 1.05 - 0.1 * (yy / max(1, fh - 1)))
+                if shiny and name not in ("up", "down"):
+                    streak = (xx + (fh - yy)) / max(1.0, fw + fh)
+                    if 0.55 < streak < 0.7:
+                        c = shade(c, 1.16)
                 if glow:
-                    c = shade(c, 1.25)
-                px[fx + xx, fy + yy] = clamp(shade(c, light)) + (255,)
+                    c = shade(c, 1.22)
+                px[fx + xx, fy + yy] = boost(clamp(shade(c, light))) + (255,)
 
     draw = ImageDraw.Draw(img)
-    edge = clamp(shade(base, 0.55)) + (255,)
+    edge = clamp(shade(base, 0.62)) + (200,)
     for name, (fx, fy, fw, fh) in faces.items():
         draw.rectangle([fx, fy, fx + fw - 1, fy + fh - 1], outline=edge)
 
@@ -427,7 +499,7 @@ def build_texture(spec, out_path):
     boxes = [b for p in spec["parts"] for b in p["boxes"]]
     width = 512
     for b in boxes:
-        need = (2 * b["d"] + 2 * b["w"]) * UV
+        need = box_px(b)[0]
         if need > width:
             width = next_pow2(need)
     placed, height = pack(boxes, width)
@@ -511,6 +583,15 @@ def model_bounds(spec):
     return low, high
 
 
+def model_metrics(spec):
+    """(shift, scale) that put the model on the ground and fit it into its hitbox."""
+    low, high = model_bounds(spec)
+    shift = -low if low < 0 else 0.0
+    height = (high + shift) / 16.0
+    scale = spec["height"] / height if height > 0 else 1.0
+    return shift, scale
+
+
 def build_java(name, spec, tex_w, tex_h, placed):
     boxes = [b for p in spec["parts"] for b in p["boxes"]]
     positions = {id(b): pos for b, pos in zip(boxes, placed)}
@@ -531,10 +612,7 @@ def build_java(name, spec, tex_w, tex_h, placed):
     L.append("")
     L.append("public class %s extends RMobModel<%s> {" % (cls, entity_cls))
     L.append('    public static final ResourceLocation TEXTURE = new ResourceLocation("randommobs", "textures/entity/%s.png");' % name)
-    low, high = model_bounds(spec)
-    shift = -low if low < 0 else 0.0
-    model_height = (high + shift) / 16.0
-    scale = spec["height"] / model_height if model_height > 0 else 1.0
+    shift, scale = model_metrics(spec)
     L.append("    public static final float SCALE = %s;" % f(round(scale, 3)))
     L.append("    public static final float SHADOW = %s;" % f(spec.get("shadow", 1.0)))
     L.append("")

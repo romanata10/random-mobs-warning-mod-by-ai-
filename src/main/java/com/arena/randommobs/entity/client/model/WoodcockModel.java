@@ -12,7 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class WoodcockModel extends RMobModel<WoodcockEntity> {
     public static final ResourceLocation TEXTURE = new ResourceLocation("randommobs", "textures/entity/woodcock.png");
-    public static final float SCALE = 0.48F;
+    public static final float SCALE = 0.86F;
     public static final float SHADOW = 0.30F;
 
     public WoodcockModel(ModelPart root) {
@@ -23,24 +23,31 @@ public class WoodcockModel extends RMobModel<WoodcockEntity> {
         MeshDefinition mesh = new MeshDefinition();
         PartDefinition root = mesh.getRoot();
         PartDefinition body = root.addOrReplaceChild("body", CubeListBuilder.create()
-                .texOffs(0, 0).addBox(-4.0F, -6.0F, -6.0F, 8.0F, 8.0F, 12.0F, CubeDeformation.NONE, 2.0F, 2.0F),
-                PartPose.offset(0.0F, 0.0F, 0.0F));
+                .texOffs(0, 0).addBox(-4.0F, -5.0F, -6.0F, 8.0F, 8.0F, 12.0F, CubeDeformation.NONE, 2.0F, 2.0F)
+                .texOffs(81, 0).addBox(-3.0F, 2.0F, 3.0F, 6.0F, 3.0F, 6.0F, CubeDeformation.NONE, 2.0F, 2.0F),
+                PartPose.offset(0.0F, 14.80F, 2.0F));
         PartDefinition head = body.addOrReplaceChild("head", CubeListBuilder.create()
-                .texOffs(81, 0).addBox(-3.0F, -3.0F, -3.0F, 6.0F, 6.0F, 6.0F, CubeDeformation.NONE, 2.0F, 2.0F)
-                .texOffs(130, 0).addBox(-1.0F, -3.0F, -10.0F, 2.0F, 2.0F, 7.0F, CubeDeformation.NONE, 2.0F, 2.0F),
-                PartPose.offset(0.0F, 9.0F, -6.0F));
+                .texOffs(130, 0).addBox(-3.0F, -3.0F, -4.0F, 6.0F, 6.0F, 7.0F, CubeDeformation.NONE, 2.0F, 2.0F)
+                .texOffs(183, 0).addBox(-1.0F, -1.0F, -11.0F, 2.0F, 2.0F, 8.0F, CubeDeformation.NONE, 2.0F, 2.0F)
+                .texOffs(224, 0).addBox(-4.0F, -4.0F, -2.0F, 2.0F, 2.0F, 3.0F, CubeDeformation.NONE, 2.0F, 2.0F)
+                .texOffs(245, 0).addBox(3.0F, -4.0F, -2.0F, 2.0F, 2.0F, 3.0F, CubeDeformation.NONE, 2.0F, 2.0F),
+                PartPose.offset(0.0F, -3.52F, -7.0F));
         PartDefinition wing_l = body.addOrReplaceChild("wing_l", CubeListBuilder.create()
-                .texOffs(167, 0).addBox(-2.0F, 0.0F, -5.0F, 2.0F, 6.0F, 10.0F, CubeDeformation.NONE, 2.0F, 2.0F),
-                PartPose.offset(-4.0F, 9.0F, 0.0F));
+                .texOffs(266, 0).addBox(-2.0F, 0.0F, -5.0F, 2.0F, 7.0F, 11.0F, CubeDeformation.NONE, 2.0F, 2.0F)
+                .texOffs(319, 0).addBox(-2.0F, 4.0F, -2.0F, 2.0F, 3.0F, 8.0F, CubeDeformation.NONE, 2.0F, 2.0F),
+                PartPose.offset(-4.0F, -1.92F, -2.0F));
         PartDefinition wing_r = body.addOrReplaceChild("wing_r", CubeListBuilder.create()
-                .texOffs(216, 0).addBox(0.0F, 0.0F, -5.0F, 2.0F, 6.0F, 10.0F, CubeDeformation.NONE, 2.0F, 2.0F),
-                PartPose.offset(4.0F, 9.0F, 0.0F));
+                .texOffs(360, 0).addBox(0.0F, 0.0F, -5.0F, 2.0F, 7.0F, 11.0F, CubeDeformation.NONE, 2.0F, 2.0F)
+                .texOffs(413, 0).addBox(0.0F, 4.0F, -2.0F, 2.0F, 3.0F, 8.0F, CubeDeformation.NONE, 2.0F, 2.0F),
+                PartPose.offset(4.0F, -1.92F, -2.0F));
         PartDefinition leg_l = body.addOrReplaceChild("leg_l", CubeListBuilder.create()
-                .texOffs(265, 0).addBox(-1.0F, 0.0F, -1.0F, 2.0F, 8.0F, 2.0F, CubeDeformation.NONE, 2.0F, 2.0F),
-                PartPose.offset(-2.0F, 16.0F, 0.0F));
+                .texOffs(454, 0).addBox(-1.0F, 0.0F, -1.0F, 2.0F, 6.0F, 2.0F, CubeDeformation.NONE, 2.0F, 2.0F)
+                .texOffs(471, 0).addBox(-2.0F, 5.0F, -2.0F, 4.0F, 1.0F, 4.0F, CubeDeformation.NONE, 2.0F, 2.0F),
+                PartPose.offset(-2.0F, 3.20F, -1.0F));
         PartDefinition leg_r = body.addOrReplaceChild("leg_r", CubeListBuilder.create()
-                .texOffs(282, 0).addBox(-1.0F, 0.0F, -1.0F, 2.0F, 8.0F, 2.0F, CubeDeformation.NONE, 2.0F, 2.0F),
-                PartPose.offset(2.0F, 16.0F, 0.0F));
+                .texOffs(0, 41).addBox(-1.0F, 0.0F, -1.0F, 2.0F, 6.0F, 2.0F, CubeDeformation.NONE, 2.0F, 2.0F)
+                .texOffs(17, 41).addBox(-2.0F, 5.0F, -2.0F, 4.0F, 1.0F, 4.0F, CubeDeformation.NONE, 2.0F, 2.0F),
+                PartPose.offset(2.0F, 3.20F, -1.0F));
         return LayerDefinition.create(mesh, 512, 64);
     }
 

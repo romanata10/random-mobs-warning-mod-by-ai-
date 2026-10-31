@@ -12,7 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class CloudRayModel extends RMobModel<CloudRayEntity> {
     public static final ResourceLocation TEXTURE = new ResourceLocation("randommobs", "textures/entity/cloud_ray.png");
-    public static final float SCALE = 0.66F;
+    public static final float SCALE = 0.85F;
     public static final float SHADOW = 1.60F;
 
     public CloudRayModel(ModelPart root) {
@@ -23,23 +23,37 @@ public class CloudRayModel extends RMobModel<CloudRayEntity> {
         MeshDefinition mesh = new MeshDefinition();
         PartDefinition root = mesh.getRoot();
         PartDefinition body = root.addOrReplaceChild("body", CubeListBuilder.create()
-                .texOffs(0, 0).addBox(-9.0F, -4.0F, -14.0F, 18.0F, 7.0F, 28.0F, CubeDeformation.NONE, 2.0F, 2.0F)
-                .texOffs(185, 0).addBox(-26.0F, -3.0F, -10.0F, 18.0F, 3.0F, 22.0F, CubeDeformation.NONE, 2.0F, 2.0F)
-                .texOffs(346, 0).addBox(8.0F, -3.0F, -10.0F, 18.0F, 3.0F, 22.0F, CubeDeformation.NONE, 2.0F, 2.0F),
-                PartPose.offset(0.0F, -6.0F, 0.0F));
+                .texOffs(0, 0).addBox(-8.0F, -4.0F, -10.0F, 16.0F, 7.0F, 20.0F, CubeDeformation.NONE, 2.0F, 2.0F)
+                .texOffs(145, 0).addBox(-5.0F, -6.0F, -7.0F, 10.0F, 3.0F, 15.0F, CubeDeformation.NONE, 2.0F, 2.0F)
+                .texOffs(246, 0).addBox(-6.0F, 3.0F, -7.0F, 12.0F, 3.0F, 14.0F, CubeDeformation.NONE, 2.0F, 2.0F)
+                .texOffs(351, 0).addBox(-2.0F, 6.0F, -3.0F, 4.0F, 3.0F, 8.0F, CubeDeformation.NONE, 2.0F, 2.0F),
+                PartPose.offset(0.0F, -0.06F, 0.0F));
         PartDefinition head = body.addOrReplaceChild("head", CubeListBuilder.create()
-                .texOffs(0, 71).addBox(-5.0F, -3.0F, -5.0F, 10.0F, 6.0F, 8.0F, CubeDeformation.NONE, 2.0F, 2.0F),
-                PartPose.offset(0.0F, -6.0F, -14.0F));
+                .texOffs(400, 0).addBox(-6.0F, -4.0F, -4.0F, 12.0F, 7.0F, 7.0F, CubeDeformation.NONE, 2.0F, 2.0F)
+                .texOffs(0, 55).addBox(-4.0F, -6.0F, -2.0F, 8.0F, 3.0F, 5.0F, CubeDeformation.NONE, 2.0F, 2.0F)
+                .texOffs(53, 55).addBox(-1.0F, -1.0F, -5.0F, 2.0F, 2.0F, 2.0F, CubeDeformation.NONE, 2.0F, 2.0F),
+                PartPose.offset(0.0F, 0.80F, -10.0F));
         PartDefinition wing_l = body.addOrReplaceChild("wing_l", CubeListBuilder.create()
-                .texOffs(73, 71).addBox(-2.0F, 0.0F, -2.0F, 3.0F, 22.0F, 3.0F, CubeDeformation.NONE, 2.0F, 2.0F),
-                PartPose.offsetAndRotation(-26.0F, -6.0F, 6.0F, 0.0F, 0.0F, -0.31F));
+                .texOffs(70, 55).addBox(-14.0F, -1.0F, -7.0F, 14.0F, 3.0F, 15.0F, CubeDeformation.NONE, 2.0F, 2.0F)
+                .texOffs(187, 55).addBox(-21.0F, 0.0F, -5.0F, 8.0F, 2.0F, 11.0F, CubeDeformation.NONE, 2.0F, 2.0F)
+                .texOffs(264, 55).addBox(-26.0F, 1.0F, -3.0F, 6.0F, 2.0F, 7.0F, CubeDeformation.NONE, 2.0F, 2.0F),
+                PartPose.offsetAndRotation(-7.0F, -0.80F, -2.0F, 0.0F, 0.0F, 0.17F));
         PartDefinition wing_r = body.addOrReplaceChild("wing_r", CubeListBuilder.create()
-                .texOffs(98, 71).addBox(-1.0F, 0.0F, -2.0F, 3.0F, 22.0F, 3.0F, CubeDeformation.NONE, 2.0F, 2.0F),
-                PartPose.offsetAndRotation(26.0F, -6.0F, 6.0F, 0.0F, 0.0F, 0.31F));
+                .texOffs(317, 55).addBox(0.0F, -1.0F, -7.0F, 14.0F, 3.0F, 15.0F, CubeDeformation.NONE, 2.0F, 2.0F)
+                .texOffs(434, 55).addBox(13.0F, 0.0F, -5.0F, 8.0F, 2.0F, 11.0F, CubeDeformation.NONE, 2.0F, 2.0F)
+                .texOffs(0, 92).addBox(20.0F, 1.0F, -3.0F, 6.0F, 2.0F, 7.0F, CubeDeformation.NONE, 2.0F, 2.0F),
+                PartPose.offsetAndRotation(7.0F, -0.80F, -2.0F, 0.0F, 0.0F, -0.17F));
         PartDefinition tentacle_0 = body.addOrReplaceChild("tentacle_0", CubeListBuilder.create()
-                .texOffs(123, 71).addBox(-1.0F, 0.0F, -1.0F, 2.0F, 18.0F, 2.0F, CubeDeformation.NONE, 2.0F, 2.0F),
-                PartPose.offsetAndRotation(0.0F, 0.0F, 12.0F, 0.35F, 0.0F, 0.0F));
-        return LayerDefinition.create(mesh, 512, 128);
+                .texOffs(53, 92).addBox(-1.0F, 0.0F, -1.0F, 3.0F, 16.0F, 3.0F, CubeDeformation.NONE, 2.0F, 2.0F)
+                .texOffs(78, 92).addBox(-1.0F, 14.0F, -1.0F, 2.0F, 12.0F, 2.0F, CubeDeformation.NONE, 2.0F, 2.0F),
+                PartPose.offsetAndRotation(0.0F, 0.80F, 10.0F, -0.42F, 0.0F, 0.0F));
+        PartDefinition fin_0 = body.addOrReplaceChild("fin_0", CubeListBuilder.create()
+                .texOffs(95, 92).addBox(-1.0F, 0.0F, -1.0F, 3.0F, 10.0F, 3.0F, CubeDeformation.NONE, 2.0F, 2.0F),
+                PartPose.offsetAndRotation(-6.0F, -0.80F, 8.0F, 0.35F, 0.0F, 0.0F));
+        PartDefinition fin_1 = body.addOrReplaceChild("fin_1", CubeListBuilder.create()
+                .texOffs(120, 92).addBox(-1.0F, 0.0F, -1.0F, 3.0F, 10.0F, 3.0F, CubeDeformation.NONE, 2.0F, 2.0F),
+                PartPose.offsetAndRotation(6.0F, -0.80F, 8.0F, 0.35F, 0.0F, 0.0F));
+        return LayerDefinition.create(mesh, 512, 256);
     }
 
     @Override
@@ -51,5 +65,7 @@ public class CloudRayModel extends RMobModel<CloudRayEntity> {
         ModelPart wing_l = this.root.getChild("body").getChild("wing_l"); Anims.flapOne(wing_l, ageInTicks, 0.25F, 3.14F);
         ModelPart wing_r = this.root.getChild("body").getChild("wing_r"); Anims.flapOne(wing_r, ageInTicks, 0.25F, 4.71F);
         ModelPart tentacle_0 = this.root.getChild("body").getChild("tentacle_0"); Anims.swayOne(tentacle_0, ageInTicks, 0.09F, 6.28F);
+        ModelPart fin_0 = this.root.getChild("body").getChild("fin_0"); Anims.flapOne(fin_0, ageInTicks, 0.25F, 7.85F);
+        ModelPart fin_1 = this.root.getChild("body").getChild("fin_1"); Anims.flapOne(fin_1, ageInTicks, 0.25F, 9.42F);
     }
 }
