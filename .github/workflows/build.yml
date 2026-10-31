@@ -35,6 +35,22 @@ jobs:
         if: always()
         run: ls -l build/libs || true
 
+      - name: Verify jar contents
+        if: success()
+        run: |
+          set -e
+          jar=$(ls build/libs/*.jar | head -n1)
+          echo "Checking $jar"
+          unzip -l "$jar" | tail -1
+          unzip -p "$jar" META-INF/mods.toml | grep -q 'modId="randommobs"'
+          unzip -p "$jar" META-INF/mods.toml | grep -q 'versionRange="\[47,)"'
+          unzip -l "$jar" | grep -q 'assets/randommobs/textures/entity/gardener.png'
+          unzip -l "$jar" | grep -q 'assets/randommobs/lang/ru_ru.json'
+          unzip -l "$jar" | grep -q 'data/randommobs/structures/root_shrine/main.nbt'
+          unzip -l "$jar" | grep -q 'data/randommobs/advancements/meep.json'
+          unzip -l "$jar" | grep -q 'com/arena/randommobs/RandomMobs.class'
+          echo "jar OK"
+
       - name: Upload jar artifact
         if: success()
         uses: actions/upload-artifact@v4
