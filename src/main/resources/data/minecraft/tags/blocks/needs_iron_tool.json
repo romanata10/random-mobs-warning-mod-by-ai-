@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "randommobs:alien_metal_block",
+    "randommobs:reinforced_glass",
+    "randommobs:storm_siren",
+    "randommobs:reinforced_planks",
+    "randommobs:fast_stairs"
+  ]
+}

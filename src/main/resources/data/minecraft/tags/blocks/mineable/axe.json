@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "randommobs:reinforced_planks",
+    "randommobs:locked_door",
+    "randommobs:tv",
+    "randommobs:casino"
+  ]
+}

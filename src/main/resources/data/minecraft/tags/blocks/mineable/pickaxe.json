@@ -2,6 +2,12 @@
   "replace": false,
   "values": [
     "randommobs:alien_metal_block",
-    "randommobs:red_root_block"
+    "randommobs:reinforced_glass",
+    "randommobs:fast_stairs",
+    "randommobs:road_block",
+    "randommobs:sidewalk_block",
+    "randommobs:storm_siren",
+    "randommobs:tornado_bunker",
+    "randommobs:glow_orb"
   ]
 }

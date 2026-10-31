@@ -69,8 +69,12 @@ for name, where in sorted(referenced.items()):
     rel = name.split("/")[0]
     plain = name.split("/")[-1]
     if rel in ("item", "block"):
-        if not os.path.exists(os.path.join(texture_dirs[rel], name[len(rel) + 1:] + ".png")):
-            problems.append("missing texture randommobs:%s (%s)" % (name, ", ".join(sorted(where))))
+        short = name[len(rel) + 1:]
+        if os.path.exists(os.path.join(texture_dirs[rel], short + ".png")):
+            continue
+        if os.path.exists(os.path.join(RES, "assets/randommobs/models", rel, short + ".json")):
+            continue
+        problems.append("missing texture randommobs:%s (%s)" % (name, ", ".join(sorted(where))))
         continue
     if os.path.exists(os.path.join(RES, "data/randommobs/structures", name + ".nbt")):
         continue

@@ -1,0 +1,60 @@
+{
+  "type": "forge:add_spawns",
+  "biomes": "#minecraft:is_overworld",
+  "spawners": [
+    {
+      "type": "randommobs:lights",
+      "weight": 6,
+      "minCount": 1,
+      "maxCount": 2
+    },
+    {
+      "type": "randommobs:chest_mimic",
+      "weight": 3,
+      "minCount": 1,
+      "maxCount": 1
+    },
+    {
+      "type": "randommobs:circuit",
+      "weight": 3,
+      "minCount": 1,
+      "maxCount": 1
+    },
+    {
+      "type": "randommobs:lantern_wraith",
+      "weight": 5,
+      "minCount": 1,
+      "maxCount": 2
+    },
+    {
+      "type": "randommobs:bog_wretch",
+      "weight": 6,
+      "minCount": 1,
+      "maxCount": 1
+    },
+    {
+      "type": "randommobs:ash_hound",
+      "weight": 6,
+      "minCount": 1,
+      "maxCount": 2
+    },
+    {
+      "type": "randommobs:cloud_ray",
+      "weight": 4,
+      "minCount": 1,
+      "maxCount": 1
+    },
+    {
+      "type": "randommobs:hollow_neighbor",
+      "weight": 3,
+      "minCount": 1,
+      "maxCount": 1
+    },
+    {
+      "type": "randommobs:siren_head",
+      "weight": 1,
+      "minCount": 1,
+      "maxCount": 1
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "display": {
+    "icon": {
+      "item": "randommobs:storm_scale"
+    },
+    "title": {
+      "translate": "advancement.randommobs.storm_survivor.title"
+    },
+    "description": {
+      "translate": "advancement.randommobs.storm_survivor.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "code": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "parent": "randommobs:root"
+}

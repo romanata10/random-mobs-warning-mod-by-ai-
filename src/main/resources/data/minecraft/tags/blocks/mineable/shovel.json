@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    "randommobs:road_block",
+    "randommobs:sidewalk_block"
+  ]
+}

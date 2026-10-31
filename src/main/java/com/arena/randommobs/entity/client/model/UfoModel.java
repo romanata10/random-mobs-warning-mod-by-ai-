@@ -3,59 +3,57 @@ package com.arena.randommobs.entity.client.model;
 import com.arena.randommobs.entity.UfoEntity;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
+import net.minecraft.client.model.geom.builders.CubeDeformation;
 import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.resources.ResourceLocation;
 
-import java.util.List;
-
 public class UfoModel extends RMobModel<UfoEntity> {
     public static final ResourceLocation TEXTURE = new ResourceLocation("randommobs", "textures/entity/ufo.png");
-    public static final float SCALE = 1.0F;
-    public static final float SHADOW = 1.60F;
+    public static final float SCALE = 0.76F;
+    public static final float SHADOW = 1.40F;
 
     public UfoModel(ModelPart root) {
         super(root);
-        this.registerParts(List.of(),
-                List.of(),
-                List.of(),
-                List.of(),
-                root.getChild("head"),
-                root.getChild("body"));
     }
 
     public static LayerDefinition createBodyLayer() {
         MeshDefinition mesh = new MeshDefinition();
         PartDefinition root = mesh.getRoot();
         PartDefinition body = root.addOrReplaceChild("body", CubeListBuilder.create()
-                .texOffs(0, 0).addBox(-24.0F, -4.0F, -24.0F, 48.0F, 8.0F, 48.0F)
-                .texOffs(0, 57).addBox(-14.0F, -8.0F, -14.0F, 28.0F, 4.0F, 28.0F),
-                PartPose.offset(0.0F, 8.0F, 0.0F));
-        PartDefinition head = root.addOrReplaceChild("head", CubeListBuilder.create()
-                .texOffs(113, 57).addBox(-10.0F, -9.0F, -10.0F, 20.0F, 9.0F, 20.0F),
+                .texOffs(0, 0).addBox(-22.0F, -6.0F, -22.0F, 44.0F, 8.0F, 44.0F, CubeDeformation.NONE, 2.0F, 2.0F)
+                .texOffs(0, 105).addBox(-14.0F, -12.0F, -14.0F, 28.0F, 6.0F, 28.0F, CubeDeformation.NONE, 2.0F, 2.0F)
+                .texOffs(0, 174).addBox(-26.0F, 2.0F, -26.0F, 52.0F, 4.0F, 52.0F, CubeDeformation.NONE, 2.0F, 2.0F),
+                PartPose.offset(0.0F, -6.0F, 0.0F));
+        PartDefinition head = body.addOrReplaceChild("head", CubeListBuilder.create()
+                .texOffs(0, 287).addBox(-10.0F, 0.0F, -10.0F, 20.0F, 5.0F, 20.0F, CubeDeformation.NONE, 2.0F, 2.0F),
                 PartPose.offset(0.0F, 4.0F, 0.0F));
-        PartDefinition light_a = root.addOrReplaceChild("light_a", CubeListBuilder.create()
-                .texOffs(194, 57).addBox(-2.0F, -2.0F, -6.0F, 4.0F, 4.0F, 12.0F),
-                PartPose.offset(20.0F, 8.0F, 0.0F));
-        PartDefinition light_b = root.addOrReplaceChild("light_b", CubeListBuilder.create()
-                .texOffs(0, 90).addBox(-2.0F, -2.0F, -6.0F, 4.0F, 4.0F, 12.0F),
-                PartPose.offset(-20.0F, 8.0F, 0.0F));
-        PartDefinition light_c = root.addOrReplaceChild("light_c", CubeListBuilder.create()
-                .texOffs(33, 90).addBox(-6.0F, -2.0F, -2.0F, 12.0F, 4.0F, 4.0F),
-                PartPose.offset(0.0F, 8.0F, 20.0F));
-        PartDefinition light_d = root.addOrReplaceChild("light_d", CubeListBuilder.create()
-                .texOffs(66, 90).addBox(-6.0F, -2.0F, -2.0F, 12.0F, 4.0F, 4.0F),
-                PartPose.offset(0.0F, 8.0F, -20.0F));
-        return LayerDefinition.create(mesh, 256, 128);
+        PartDefinition lamp_0 = body.addOrReplaceChild("lamp_0", CubeListBuilder.create()
+                .texOffs(161, 287).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 3.0F, 4.0F, CubeDeformation.NONE, 2.0F, 2.0F),
+                PartPose.offset(-16.0F, 4.0F, -16.0F));
+        PartDefinition lamp_1 = body.addOrReplaceChild("lamp_1", CubeListBuilder.create()
+                .texOffs(194, 287).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 3.0F, 4.0F, CubeDeformation.NONE, 2.0F, 2.0F),
+                PartPose.offset(-5.0F, 4.0F, 16.0F));
+        PartDefinition lamp_2 = body.addOrReplaceChild("lamp_2", CubeListBuilder.create()
+                .texOffs(227, 287).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 3.0F, 4.0F, CubeDeformation.NONE, 2.0F, 2.0F),
+                PartPose.offset(6.0F, 4.0F, -16.0F));
+        PartDefinition lamp_3 = body.addOrReplaceChild("lamp_3", CubeListBuilder.create()
+                .texOffs(260, 287).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 3.0F, 4.0F, CubeDeformation.NONE, 2.0F, 2.0F),
+                PartPose.offset(17.0F, 4.0F, 16.0F));
+        return LayerDefinition.create(mesh, 512, 512);
     }
 
     @Override
     public void setupAnim(UfoEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks,
                         float netHeadYaw, float headPitch) {
         this.resetPose();
-        Anims.head(this.head, netHeadYaw, headPitch);
-        Anims.bob(this.body, ageInTicks, 0.6F);
+        ModelPart body = this.root.getChild("body"); Anims.bob(body, ageInTicks, 0.45F);
+        ModelPart head = this.root.getChild("body").getChild("head"); Anims.pulse(head, ageInTicks, 0.06F);
+        ModelPart lamp_0 = this.root.getChild("body").getChild("lamp_0"); Anims.spin(lamp_0, ageInTicks, 0.35F);
+        ModelPart lamp_1 = this.root.getChild("body").getChild("lamp_1"); Anims.spin(lamp_1, ageInTicks, 0.35F);
+        ModelPart lamp_2 = this.root.getChild("body").getChild("lamp_2"); Anims.spin(lamp_2, ageInTicks, 0.35F);
+        ModelPart lamp_3 = this.root.getChild("body").getChild("lamp_3"); Anims.spin(lamp_3, ageInTicks, 0.35F);
     }
 }

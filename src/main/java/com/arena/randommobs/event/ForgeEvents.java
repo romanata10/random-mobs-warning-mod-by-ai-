@@ -8,6 +8,7 @@ import com.arena.randommobs.entity.GiantSpiderEntity;
 import com.arena.randommobs.entity.KrakenEntity;
 import com.arena.randommobs.entity.TripodEntity;
 import com.arena.randommobs.registry.ModBlocks;
+import com.arena.randommobs.storm.StormHandler;
 import com.arena.randommobs.registry.ModEffects;
 import com.arena.randommobs.util.Advancements;
 import net.minecraft.core.BlockPos;
@@ -18,6 +19,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -94,6 +96,17 @@ public final class ForgeEvents {
             Advancements.grant(killer, "spider_silk");
         } else if (dead instanceof EvilWatermelonEntity) {
             Advancements.grant(killer, "watermelon_slayer");
+        }
+    }
+
+    @SubscribeEvent
+    public static void onLevelTick(TickEvent.LevelTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) {
+            return;
+        }
+        if (event.level instanceof net.minecraft.server.level.ServerLevel serverLevel
+                && serverLevel.dimension() == Level.OVERWORLD) {
+            StormHandler.tick(serverLevel);
         }
     }
 

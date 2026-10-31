@@ -1,0 +1,12 @@
+{
+  "type": "forge:add_spawns",
+  "biomes": "randommobs:scorched_plains",
+  "spawners": [
+    {
+      "type": "randommobs:tank",
+      "weight": 2,
+      "minCount": 1,
+      "maxCount": 1
+    }
+  ]
+}

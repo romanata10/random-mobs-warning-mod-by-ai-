@@ -1,0 +1,61 @@
+{
+  "textures": {
+    "particle": "randommobs:block/tv_side",
+    "body": "randommobs:block/tv_side",
+    "screen": "randommobs:block/tv_screen"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        1
+      ],
+      "to": [
+        16,
+        11,
+        15
+      ],
+      "faces": {
+        "down": {
+          "texture": "#body"
+        },
+        "up": {
+          "texture": "#body"
+        },
+        "west": {
+          "texture": "#body"
+        },
+        "east": {
+          "texture": "#body"
+        },
+        "north": {
+          "texture": "#body"
+        },
+        "south": {
+          "texture": "#body"
+        }
+      }
+    },
+    {
+      "from": [
+        2,
+        2,
+        0.9
+      ],
+      "to": [
+        14,
+        9,
+        1.1
+      ],
+      "faces": {
+        "north": {
+          "texture": "#screen"
+        },
+        "south": {
+          "texture": "#screen"
+        }
+      }
+    }
+  ]
+}

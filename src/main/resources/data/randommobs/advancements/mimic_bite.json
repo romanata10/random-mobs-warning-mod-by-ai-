@@ -1,0 +1,23 @@
+{
+  "display": {
+    "icon": {
+      "item": "randommobs:lock_key"
+    },
+    "title": {
+      "translate": "advancement.randommobs.mimic_bite.title"
+    },
+    "description": {
+      "translate": "advancement.randommobs.mimic_bite.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "code": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "parent": "randommobs:root"
+}

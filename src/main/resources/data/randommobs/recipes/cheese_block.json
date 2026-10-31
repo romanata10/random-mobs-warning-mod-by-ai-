@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "##",
+    "##"
+  ],
+  "key": {
+    "#": {
+      "item": "randommobs:cheese_slice"
+    }
+  },
+  "result": {
+    "item": "randommobs:cheese_block"
+  }
+}

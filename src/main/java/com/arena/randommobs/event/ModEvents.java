@@ -2,6 +2,19 @@ package com.arena.randommobs.event;
 
 import com.arena.randommobs.RandomMobs;
 import com.arena.randommobs.entity.AliveHouseEntity;
+import com.arena.randommobs.entity.AshHoundEntity;
+import com.arena.randommobs.entity.BogWretchEntity;
+import com.arena.randommobs.entity.ChestMimicEntity;
+import com.arena.randommobs.entity.CircuitEntity;
+import com.arena.randommobs.entity.CloudRayEntity;
+import com.arena.randommobs.entity.HollowNeighborEntity;
+import com.arena.randommobs.entity.LanternWraithEntity;
+import com.arena.randommobs.entity.LightsEntity;
+import com.arena.randommobs.entity.SirenHeadEntity;
+import com.arena.randommobs.entity.TankEntity;
+import com.arena.randommobs.entity.TornadoEntity;
+import com.arena.randommobs.entity.WarshipEntity;
+import com.arena.randommobs.entity.WaterGrabberEntity;
 import com.arena.randommobs.entity.AliveTreeEntity;
 import com.arena.randommobs.entity.BearEntity;
 import com.arena.randommobs.entity.BloopEntity;
@@ -42,6 +55,19 @@ public final class ModEvents {
         event.put(ModEntities.EVIL_WATERMELON.get(), EvilWatermelonEntity.createAttributes().build());
         event.put(ModEntities.ALIVE_TREE.get(), AliveTreeEntity.createAttributes().build());
         event.put(ModEntities.WOODCOCK.get(), WoodcockEntity.createAttributes().build());
+        event.put(ModEntities.LIGHTS.get(), LightsEntity.createAttributes().build());
+        event.put(ModEntities.CHEST_MIMIC.get(), ChestMimicEntity.createAttributes().build());
+        event.put(ModEntities.WATER_GRABBER.get(), WaterGrabberEntity.createAttributes().build());
+        event.put(ModEntities.TANK.get(), TankEntity.createAttributes().build());
+        event.put(ModEntities.SIREN_HEAD.get(), SirenHeadEntity.createAttributes().build());
+        event.put(ModEntities.WARSHIP.get(), WarshipEntity.createAttributes().build());
+        event.put(ModEntities.CIRCUIT.get(), CircuitEntity.createAttributes().build());
+        event.put(ModEntities.ASH_HOUND.get(), AshHoundEntity.createAttributes().build());
+        event.put(ModEntities.CLOUD_RAY.get(), CloudRayEntity.createAttributes().build());
+        event.put(ModEntities.BOG_WRETCH.get(), BogWretchEntity.createAttributes().build());
+        event.put(ModEntities.LANTERN_WRAITH.get(), LanternWraithEntity.createAttributes().build());
+        event.put(ModEntities.HOLLOW_NEIGHBOR.get(), HollowNeighborEntity.createAttributes().build());
+        event.put(ModEntities.TORNADO.get(), TornadoEntity.createAttributes().build());
     }
 
     @SubscribeEvent
@@ -72,6 +98,30 @@ public final class ModEvents {
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AliveTreeEntity::checkLightSpawnRules, Operation.OR);
         event.register(ModEntities.WOODCOCK.get(), SpawnPlacements.Type.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, Operation.OR);
+        event.register(ModEntities.LIGHTS.get(), SpawnPlacements.Type.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, LightsEntity::checkLightSpawnRules, Operation.OR);
+        event.register(ModEntities.CHEST_MIMIC.get(), SpawnPlacements.Type.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, ChestMimicEntity::checkDarkSpawnRules, Operation.OR);
+        event.register(ModEntities.WATER_GRABBER.get(), SpawnPlacements.Type.IN_WATER,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, WaterGrabberEntity::checkWaterSpawnRules, Operation.OR);
+        event.register(ModEntities.TANK.get(), SpawnPlacements.Type.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, TankEntity::checkLightSpawnRules, Operation.OR);
+        event.register(ModEntities.SIREN_HEAD.get(), SpawnPlacements.Type.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SirenHeadEntity::checkDarkSpawnRules, Operation.OR);
+        event.register(ModEntities.WARSHIP.get(), SpawnPlacements.Type.IN_WATER,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, WarshipEntity::checkWaterSpawnRules, Operation.OR);
+        event.register(ModEntities.CIRCUIT.get(), SpawnPlacements.Type.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, CircuitEntity::checkDarkSpawnRules, Operation.OR);
+        event.register(ModEntities.ASH_HOUND.get(), SpawnPlacements.Type.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AshHoundEntity::checkLightSpawnRules, Operation.OR);
+        event.register(ModEntities.CLOUD_RAY.get(), SpawnPlacements.Type.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, CloudRayEntity::checkLightSpawnRules, Operation.OR);
+        event.register(ModEntities.BOG_WRETCH.get(), SpawnPlacements.Type.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BogWretchEntity::checkDarkSpawnRules, Operation.OR);
+        event.register(ModEntities.LANTERN_WRAITH.get(), SpawnPlacements.Type.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, LanternWraithEntity::checkDarkSpawnRules, Operation.OR);
+        event.register(ModEntities.HOLLOW_NEIGHBOR.get(), SpawnPlacements.Type.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, HollowNeighborEntity::checkDarkSpawnRules, Operation.OR);
     }
 
     private ModEvents() {

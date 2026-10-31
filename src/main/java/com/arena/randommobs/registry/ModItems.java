@@ -1,7 +1,12 @@
 package com.arena.randommobs.registry;
 
 import com.arena.randommobs.RandomMobs;
+import com.arena.randommobs.item.BoltLanceItem;
+import com.arena.randommobs.item.ChipsItem;
 import com.arena.randommobs.item.HeatRayItem;
+import com.arena.randommobs.item.RadioItem;
+import com.arena.randommobs.item.TimeClockItem;
+import com.arena.randommobs.item.WeatherMapItem;
 import com.arena.randommobs.item.RootBladeItem;
 import com.arena.randommobs.item.RootSeedItem;
 import com.arena.randommobs.item.RootShardItem;
@@ -66,6 +71,30 @@ public final class ModItems {
     public static final RegistryObject<Item> ROOT_SHARD = register("root_shard",
             () -> new RootShardItem(props().stacksTo(1).fireResistant()));
 
+
+    // ---- 1.1 storm pack --------------------------------------------------
+    public static final RegistryObject<Item> LOCK_KEY = register("lock_key", () -> new Item(props().stacksTo(1)));
+    public static final RegistryObject<Item> STORM_RADIO = register("storm_radio",
+            () -> new RadioItem(props().stacksTo(1)));
+    public static final RegistryObject<Item> WEATHER_MAP = register("weather_map",
+            () -> new WeatherMapItem(props().stacksTo(1)));
+    public static final RegistryObject<Item> TIME_CLOCK = register("time_clock",
+            () -> new TimeClockItem(props().stacksTo(1)));
+    public static final RegistryObject<Item> CHIPS = register("chips",
+            () -> new ChipsItem(props().food(new FoodProperties.Builder().nutrition(5).saturationMod(0.4F)
+                    .fast().build())));
+    public static final RegistryObject<Item> KIRIESHKI = register("kirieshki",
+            () -> new ChipsItem(props().food(new FoodProperties.Builder().nutrition(7).saturationMod(0.6F)
+                    .fast().build())));
+    public static final RegistryObject<Item> CHEESE_SLICE = register("cheese_slice",
+            () -> new Item(props().food(new FoodProperties.Builder().nutrition(4).saturationMod(0.5F).build())));
+    public static final RegistryObject<Item> BOLT_LANCE = register("bolt_lance",
+            () -> new BoltLanceItem(Tiers.IRON, 4, -2.4F, props().durability(600)));
+    public static final RegistryObject<Item> TANK_TRACK = register("tank_track", () -> new Item(props()));
+    public static final RegistryObject<Item> CIRCUIT_FRAGMENT = register("circuit_fragment", () -> new Item(props()));
+    public static final RegistryObject<Item> STORM_SCALE = register("storm_scale", () -> new Item(props()));
+    public static final RegistryObject<Item> SIREN_BULB = register("siren_bulb", () -> new Item(props()));
+
     // ---- spawn eggs ------------------------------------------------------
     public static final RegistryObject<Item> TRIPOD_SPAWN_EGG = spawnEgg("tripod_spawn_egg", () -> ModEntities.TRIPOD.get(), 0x3d4450, 0xf2d15a);
     public static final RegistryObject<Item> WOODCRAWLER_SPAWN_EGG = spawnEgg("woodcrawler_spawn_egg", () -> ModEntities.WOODCRAWLER.get(), 0x5d4227, 0xb8d86a);
@@ -80,6 +109,18 @@ public final class ModItems {
     public static final RegistryObject<Item> EVIL_WATERMELON_SPAWN_EGG = spawnEgg("evil_watermelon_spawn_egg", () -> ModEntities.EVIL_WATERMELON.get(), 0x2f5c1f, 0xd43a3a);
     public static final RegistryObject<Item> ALIVE_TREE_SPAWN_EGG = spawnEgg("alive_tree_spawn_egg", () -> ModEntities.ALIVE_TREE.get(), 0x5a3f22, 0x3f7a2e);
     public static final RegistryObject<Item> WOODCOCK_SPAWN_EGG = spawnEgg("woodcock_spawn_egg", () -> ModEntities.WOODCOCK.get(), 0x6b5540, 0xd8c3a2);
+    public static final RegistryObject<Item> LIGHTS_SPAWN_EGG = spawnEgg("lights_spawn_egg", () -> ModEntities.LIGHTS.get(), 0x8a8f95, 0xffffff);
+    public static final RegistryObject<Item> CHEST_MIMIC_SPAWN_EGG = spawnEgg("chest_mimic_spawn_egg", () -> ModEntities.CHEST_MIMIC.get(), 0x7a5a2e, 0xd8b46a);
+    public static final RegistryObject<Item> WATER_GRABBER_SPAWN_EGG = spawnEgg("water_grabber_spawn_egg", () -> ModEntities.WATER_GRABBER.get(), 0x8c2f45, 0xe0a3b5);
+    public static final RegistryObject<Item> TANK_SPAWN_EGG = spawnEgg("tank_spawn_egg", () -> ModEntities.TANK.get(), 0x4a5232, 0x2b2f1c);
+    public static final RegistryObject<Item> SIREN_HEAD_SPAWN_EGG = spawnEgg("siren_head_spawn_egg", () -> ModEntities.SIREN_HEAD.get(), 0x8e8471, 0xc4463a);
+    public static final RegistryObject<Item> WARSHIP_SPAWN_EGG = spawnEgg("warship_spawn_egg", () -> ModEntities.WARSHIP.get(), 0x3d4650, 0x8f2f2a);
+    public static final RegistryObject<Item> CIRCUIT_SPAWN_EGG = spawnEgg("circuit_spawn_egg", () -> ModEntities.CIRCUIT.get(), 0x1d2b2b, 0x59ffd0);
+    public static final RegistryObject<Item> ASH_HOUND_SPAWN_EGG = spawnEgg("ash_hound_spawn_egg", () -> ModEntities.ASH_HOUND.get(), 0x3b332d, 0xd9713a);
+    public static final RegistryObject<Item> CLOUD_RAY_SPAWN_EGG = spawnEgg("cloud_ray_spawn_egg", () -> ModEntities.CLOUD_RAY.get(), 0xd7dde2, 0x6fa8c9);
+    public static final RegistryObject<Item> BOG_WRETCH_SPAWN_EGG = spawnEgg("bog_wretch_spawn_egg", () -> ModEntities.BOG_WRETCH.get(), 0x38442c, 0x7f8f52);
+    public static final RegistryObject<Item> LANTERN_WRAITH_SPAWN_EGG = spawnEgg("lantern_wraith_spawn_egg", () -> ModEntities.LANTERN_WRAITH.get(), 0x2a2f3c, 0x74c9ff);
+    public static final RegistryObject<Item> HOLLOW_NEIGHBOR_SPAWN_EGG = spawnEgg("hollow_neighbor_spawn_egg", () -> ModEntities.HOLLOW_NEIGHBOR.get(), 0x6a5a48, 0x1b1712);
 
     private static Item.Properties props() {
         return new Item.Properties();

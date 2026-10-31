@@ -27,6 +27,18 @@ ITEMS = {
     "root_fruit": ("Root Fruit", "Корневой плод", "generated"),
     "root_seed": ("Root Seed", "Семя корней", "generated"),
     "root_shard": ("Root Shard", "Осколок корня", "generated"),
+    "lock_key": ("Lock Key", "Ключ от двери", "generated"),
+    "storm_radio": ("Storm Radio", "Штормовое радио", "generated"),
+    "weather_map": ("Weather Map", "Карта погоды", "generated"),
+    "time_clock": ("World Clock", "Часы мира", "generated"),
+    "chips": ("Chips", "Чипсы", "generated"),
+    "kirieshki": ("Kirieshki", "Кириешки", "generated"),
+    "cheese_slice": ("Cheese Slice", "Ломтик сыра", "generated"),
+    "bolt_lance": ("Bolt Lance", "Громовое копьё", "handheld"),
+    "tank_track": ("Tank Track", "Траковая лента танка", "generated"),
+    "circuit_fragment": ("Circuit Fragment", "Фрагмент схемы", "generated"),
+    "storm_scale": ("Storm Scale", "Чешуя шторма", "generated"),
+    "siren_bulb": ("Siren Bulb", "Лампа сирены", "generated"),
 }
 
 BLOCKS = {
@@ -36,6 +48,18 @@ BLOCKS = {
     "red_root_block": ("Red Root Block", "Блок красных корней", "cube"),
     "alien_metal_block": ("Alien Metal Block", "Блок чужого металла", "cube"),
     "bloop_flesh_block": ("Bloop Flesh", "Плоть блупа", "cube"),
+    "reinforced_planks": ("Reinforced Planks", "Усиленные доски", "cube"),
+    "reinforced_glass": ("Reinforced Glass", "Усиленное стекло", "glass"),
+    "fast_stairs": ("Fast Stairs", "Быстрая лестница", "stairs"),
+    "road_block": ("Road Block", "Блок дороги", "cube"),
+    "sidewalk_block": ("Sidewalk Block", "Блок тротуара", "cube"),
+    "locked_door": ("Locked Door", "Дверь с замком", "door"),
+    "cheese_block": ("Cheese Block", "Блок сыра", "cube"),
+    "storm_siren": ("Storm Siren", "Сирена штормов", "cube"),
+    "glow_orb": ("Glowing White Orb", "Светящаяся белая сфера", "orb"),
+    "tornado_bunker": ("Bunker Plating", "Броня бункера", "cube"),
+    "casino": ("Casino", "Казино", "cube"),
+    "tv": ("Television", "Телевизор", "tv"),
 }
 
 ENTITIES = {
@@ -52,6 +76,19 @@ ENTITIES = {
     "evil_watermelon": ("Evil Watermelon", "Злой арбуз", (0x2F5C1F, 0xD43A3A)),
     "alive_tree": ("Living Tree", "Живое дерево", (0x5A3F22, 0x3F7A2E)),
     "woodcock": ("American Woodcock", "Американский вальдшнеп", (0x6B5540, 0xD8C3A2)),
+    "lights": ("Lights", "Огоньки", (0x8A8F95, 0xFFFFFF)),
+    "chest_mimic": ("Chest Mimic", "Мимик сундука", (0x7A5A2E, 0xD8B46A)),
+    "water_grabber": ("Water Grabber", "Водный захватчик", (0x8C2F45, 0xE0A3B5)),
+    "tank": ("Tank", "Танк", (0x4A5232, 0x2B2F1C)),
+    "siren_head": ("Siren Head", "Сиренаголовый", (0x8E8471, 0xC4463A)),
+    "warship": ("Ghost Warship", "Корабль-призрак", (0x3D4650, 0x8F2F2A)),
+    "circuit": ("Circuit", "Схема", (0x1D2B2B, 0x59FFD0)),
+    "ash_hound": ("Ash Hound", "Пепельный пёс", (0x3B332D, 0xD9713A)),
+    "cloud_ray": ("Cloud Ray", "Облачный скат", (0xD7DDE2, 0x6FA8C9)),
+    "bog_wretch": ("Bog Wretch", "Болотный утопленник", (0x38442C, 0x7F8F52)),
+    "lantern_wraith": ("Lantern Wraith", "Фонарный призрак", (0x2A2F3C, 0x74C9FF)),
+    "hollow_neighbor": ("Hollow Neighbour", "Пустой сосед", (0x6A5A48, 0x1B1712)),
+    "tornado": ("Tornado", "Торнадо", (0x8C99A6, 0xDDE6EE)),
 }
 
 ADVANCEMENTS = {
@@ -125,6 +162,21 @@ ADVANCEMENTS = {
         "ru": ("Дерево помнит", "Сломайте бревно на глазах у живого дерева."),
         "icon": "minecraft:oak_log", "frame": "goal", "parent": "root",
     },
+    "storm_survivor": {
+        "en": ("Storm Survivor", "Live through a tornado warning and the storm that follows."),
+        "ru": ("Пережил шторм", "Переживите предупреждение о торнадо и сам шторм."),
+        "icon": "randommobs:storm_scale", "frame": "challenge", "parent": "root",
+    },
+    "mimic_bite": {
+        "en": ("It Was A Mouth", "Try to open a chest that is not a chest."),
+        "ru": ("Это был рот", "Попробуйте открыть сундук, который не сундук."),
+        "icon": "randommobs:lock_key", "frame": "task", "parent": "root",
+    },
+    "casino_jackpot": {
+        "en": ("The House Always Loses", "Hit the jackpot at the casino block."),
+        "ru": ("Казино всегда проигрывает", "Сорвите джекпот в блоке казино."),
+        "icon": "minecraft:diamond", "frame": "challenge", "parent": "root",
+    },
 }
 
 
@@ -146,19 +198,94 @@ def spawn_egg_model(name):
           {"parent": "minecraft:item/template_spawn_egg"})
 
 
+def _template(name):
+    with open(os.path.join(ROOT, "tools/templates", name), encoding="utf-8") as fh:
+        return json.load(fh)
+
+
+DOOR_PARTS = ("bottom_left", "bottom_left_open", "bottom_right", "bottom_right_open",
+              "top_left", "top_left_open", "top_right", "top_right_open")
+
+
 def block_model(name, kind):
+    item_parent = "randommobs:block/" + name
     if kind == "cross":
         write(os.path.join(ASSETS, "models/block", name + ".json"),
               {"parent": "minecraft:block/cross",
                "textures": {"cross": "randommobs:block/" + name}})
+    elif kind == "glass":
+        write(os.path.join(ASSETS, "models/block", name + ".json"),
+              {"parent": "minecraft:block/cube_all", "render_type": "minecraft:translucent",
+               "textures": {"all": "randommobs:block/" + name}})
+    elif kind == "stairs":
+        for suffix, parent in (("", "minecraft:block/stairs"),
+                               ("_inner", "minecraft:block/inner_stairs"),
+                               ("_outer", "minecraft:block/outer_stairs")):
+            write(os.path.join(ASSETS, "models/block", name + suffix + ".json"), {
+                "parent": parent,
+                "textures": {"bottom": "randommobs:block/" + name + "_bottom",
+                             "top": "randommobs:block/" + name + "_top",
+                             "side": "randommobs:block/" + name + "_side"},
+            })
+        variants = json.loads(json.dumps(_template("oak_stairs.json")["variants"]))
+        for key, value in variants.items():
+            model = value["model"]
+            if model == "minecraft:block/oak_stairs":
+                value["model"] = "randommobs:block/" + name
+            elif model == "minecraft:block/inner_stairs":
+                value["model"] = "randommobs:block/" + name + "_inner"
+            else:
+                value["model"] = "randommobs:block/" + name + "_outer"
+        write(os.path.join(ASSETS, "blockstates", name + ".json"), {"variants": variants})
+    elif kind == "door":
+        for part in DOOR_PARTS:
+            write(os.path.join(ASSETS, "models/block", name + "_" + part + ".json"), {
+                "parent": "minecraft:block/door_" + part,
+                "textures": {"bottom": "randommobs:block/" + name + "_bottom",
+                             "top": "randommobs:block/" + name + "_top"},
+            })
+        variants = json.loads(json.dumps(_template("oak_door.json")["variants"]))
+        for value in variants.values():
+            value["model"] = value["model"].replace("minecraft:block/oak_door_",
+                                                    "randommobs:block/" + name + "_")
+        write(os.path.join(ASSETS, "blockstates", name + ".json"), {"variants": variants})
+        item_parent = "minecraft:item/generated"
+    elif kind == "orb":
+        faces = {side: {"texture": "#shell", "uv": [3, 3, 13, 13]}
+                 for side in ("down", "up", "north", "south", "west", "east")}
+        write(os.path.join(ASSETS, "models/block", name + ".json"), {
+            "textures": {"particle": "randommobs:block/" + name,
+                         "shell": "randommobs:block/" + name},
+            "elements": [{"from": [3, 3, 3], "to": [13, 13, 13], "faces": faces}],
+        })
+        write(os.path.join(ASSETS, "blockstates", name + ".json"),
+              {"variants": {"": {"model": "randommobs:block/" + name}}})
+    elif kind == "tv":
+        write(os.path.join(ASSETS, "models/block", name + ".json"), {
+            "textures": {"particle": "randommobs:block/tv_side",
+                         "body": "randommobs:block/tv_side",
+                         "screen": "randommobs:block/tv_screen"},
+            "elements": [
+                {"from": [0, 0, 1], "to": [16, 11, 15],
+                 "faces": {side: {"texture": "#body"} for side in ("down", "up", "west", "east", "north", "south")}},
+                {"from": [2, 2, 0.9], "to": [14, 9, 1.1],
+                 "faces": {"north": {"texture": "#screen"}, "south": {"texture": "#screen"}}},
+            ],
+        })
+        write(os.path.join(ASSETS, "blockstates", name + ".json"),
+              {"variants": {"": {"model": "randommobs:block/" + name}}})
     else:
         write(os.path.join(ASSETS, "models/block", name + ".json"),
               {"parent": "minecraft:block/cube_all",
                "textures": {"all": "randommobs:block/" + name}})
-    write(os.path.join(ASSETS, "blockstates", name + ".json"),
-          {"variants": {"": {"model": "randommobs:block/" + name}}})
-    write(os.path.join(ASSETS, "models/item", name + ".json"),
-          {"parent": "randommobs:block/" + name})
+    if kind not in ("stairs", "door", "orb", "tv"):
+        write(os.path.join(ASSETS, "blockstates", name + ".json"),
+              {"variants": {"": {"model": "randommobs:block/" + name}}})
+    if item_parent == "minecraft:item/generated":
+        write(os.path.join(ASSETS, "models/item", name + ".json"),
+              {"parent": item_parent, "textures": {"layer0": "randommobs:item/" + name}})
+    else:
+        write(os.path.join(ASSETS, "models/item", name + ".json"), {"parent": item_parent})
 
 
 def block_loot(name):
@@ -275,6 +402,141 @@ RECIPES = {
         "key": {"#": {"item": "randommobs:bloop_eye"}},
         "result": {"item": "randommobs:bloop_flesh_block"},
     },
+    "reinforced_planks": {
+        "type": "minecraft:crafting_shapeless",
+        "ingredients": [{"item": "minecraft:oak_planks"}, {"item": "minecraft:oak_planks"},
+                        {"item": "minecraft:oak_planks"}, {"item": "minecraft:iron_ingot"}],
+        "result": {"item": "randommobs:reinforced_planks", "count": 4},
+    },
+    "reinforced_glass": {
+        "type": "minecraft:crafting_shapeless",
+        "ingredients": [{"item": "minecraft:glass"}, {"item": "minecraft:glass"},
+                        {"item": "minecraft:glass"}, {"item": "minecraft:glass"},
+                        {"item": "minecraft:iron_ingot"}],
+        "result": {"item": "randommobs:reinforced_glass", "count": 4},
+    },
+    "fast_stairs": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": ["#  ", "## ", "###"],
+        "key": {"#": {"item": "randommobs:reinforced_planks"}},
+        "result": {"item": "randommobs:fast_stairs", "count": 4},
+    },
+    "road_block": {
+        "type": "minecraft:crafting_shapeless",
+        "ingredients": [{"item": "minecraft:gravel"}, {"item": "minecraft:gravel"},
+                        {"item": "minecraft:gravel"}, {"item": "minecraft:gravel"},
+                        {"item": "minecraft:coal"}],
+        "result": {"item": "randommobs:road_block", "count": 8},
+    },
+    "sidewalk_block": {
+        "type": "minecraft:crafting_shapeless",
+        "ingredients": [{"item": "minecraft:stone"}, {"item": "minecraft:stone"},
+                        {"item": "minecraft:stone"}, {"item": "minecraft:stone"},
+                        {"item": "minecraft:quartz"}],
+        "result": {"item": "randommobs:sidewalk_block", "count": 8},
+    },
+    "locked_door": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": ["##", "##", "##"],
+        "key": {"#": {"item": "randommobs:reinforced_planks"}},
+        "result": {"item": "randommobs:locked_door", "count": 3},
+    },
+    "lock_key": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": [" I ", "IGI", " I "],
+        "key": {"I": {"item": "minecraft:iron_ingot"}, "G": {"item": "minecraft:gold_nugget"}},
+        "result": {"item": "randommobs:lock_key"},
+    },
+    "cheese_block": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": ["##", "##"],
+        "key": {"#": {"item": "randommobs:cheese_slice"}},
+        "result": {"item": "randommobs:cheese_block"},
+    },
+    "cheese_slice": {
+        "type": "minecraft:crafting_shapeless",
+        "ingredients": [{"item": "minecraft:milk_bucket"}, {"item": "minecraft:sugar"},
+                        {"item": "minecraft:egg"}],
+        "result": {"item": "randommobs:cheese_slice", "count": 3},
+    },
+    "cheese_slice_from_block": {
+        "type": "minecraft:crafting_shapeless",
+        "ingredients": [{"item": "randommobs:cheese_block"}],
+        "result": {"item": "randommobs:cheese_slice", "count": 4},
+    },
+    "storm_siren": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": ["III", "INI", "IRI"],
+        "key": {"I": {"item": "minecraft:iron_ingot"}, "N": {"item": "minecraft:note_block"},
+                "R": {"item": "minecraft:redstone"}},
+        "result": {"item": "randommobs:storm_siren"},
+    },
+    "glow_orb": {
+        "type": "minecraft:crafting_shapeless",
+        "ingredients": [{"item": "minecraft:glowstone_dust"}, {"item": "minecraft:glowstone_dust"},
+                        {"item": "minecraft:glowstone_dust"}, {"item": "minecraft:glowstone_dust"},
+                        {"item": "minecraft:glass"}, {"item": "minecraft:ender_pearl"}],
+        "result": {"item": "randommobs:glow_orb", "count": 2},
+    },
+    "tornado_bunker": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": ["III", "IOI", "III"],
+        "key": {"I": {"item": "minecraft:iron_block"}, "O": {"item": "minecraft:obsidian"}},
+        "result": {"item": "randommobs:tornado_bunker", "count": 4},
+    },
+    "casino": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": ["GPG", "PRP", "GPG"],
+        "key": {"G": {"item": "minecraft:gold_ingot"}, "P": {"item": "minecraft:oak_planks"},
+                "R": {"item": "minecraft:redstone_block"}},
+        "result": {"item": "randommobs:casino"},
+    },
+    "tv": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": ["III", "IGI", "IRI"],
+        "key": {"I": {"item": "minecraft:iron_ingot"}, "G": {"item": "minecraft:glass"},
+                "R": {"item": "minecraft:redstone"}},
+        "result": {"item": "randommobs:tv"},
+    },
+    "storm_radio": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": ["ICI", "IRI", "III"],
+        "key": {"I": {"item": "minecraft:iron_ingot"}, "C": {"item": "minecraft:copper_ingot"},
+                "R": {"item": "minecraft:redstone"}},
+        "result": {"item": "randommobs:storm_radio"},
+    },
+    "weather_map": {
+        "type": "minecraft:crafting_shapeless",
+        "ingredients": [{"item": "minecraft:paper"}, {"item": "minecraft:paper"},
+                        {"item": "minecraft:paper"}, {"item": "minecraft:blue_dye"}],
+        "result": {"item": "randommobs:weather_map"},
+    },
+    "time_clock": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": [" G ", "GRG", " Q "],
+        "key": {"G": {"item": "minecraft:gold_ingot"}, "R": {"item": "minecraft:redstone"},
+                "Q": {"item": "minecraft:quartz"}},
+        "result": {"item": "randommobs:time_clock"},
+    },
+    "chips": {
+        "type": "minecraft:crafting_shapeless",
+        "ingredients": [{"item": "minecraft:wheat"}, {"item": "minecraft:wheat"},
+                        {"item": "minecraft:baked_potato"}],
+        "result": {"item": "randommobs:chips", "count": 3},
+    },
+    "kirieshki": {
+        "type": "minecraft:crafting_shapeless",
+        "ingredients": [{"item": "minecraft:wheat"}, {"item": "minecraft:wheat"},
+                        {"item": "minecraft:wheat"}, {"item": "minecraft:bread"}],
+        "result": {"item": "randommobs:kirieshki", "count": 3},
+    },
+    "bolt_lance": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": ["  I", " L ", "S  "],
+        "key": {"I": {"item": "minecraft:iron_ingot"}, "L": {"item": "minecraft:lightning_rod"},
+                "S": {"item": "minecraft:stick"}},
+        "result": {"item": "randommobs:bolt_lance"},
+    },
 }
 
 SMELTING = {
@@ -301,6 +563,28 @@ def recipes():
         })
 
 
+def block_tags():
+    mc = os.path.join(ROOT, "src/main/resources/data/minecraft/tags/blocks")
+
+    def tag(path, values):
+        write(os.path.join(mc, path), {"replace": False, "values": values})
+
+    tag("mineable/pickaxe.json", [
+        "randommobs:alien_metal_block", "randommobs:reinforced_glass", "randommobs:fast_stairs",
+        "randommobs:road_block", "randommobs:sidewalk_block", "randommobs:storm_siren",
+        "randommobs:tornado_bunker", "randommobs:glow_orb",
+    ])
+    tag("mineable/axe.json", [
+        "randommobs:reinforced_planks", "randommobs:locked_door", "randommobs:tv", "randommobs:casino",
+    ])
+    tag("mineable/shovel.json", ["randommobs:road_block", "randommobs:sidewalk_block"])
+    tag("needs_iron_tool.json", [
+        "randommobs:alien_metal_block", "randommobs:reinforced_glass", "randommobs:storm_siren",
+        "randommobs:reinforced_planks", "randommobs:fast_stairs",
+    ])
+    tag("needs_diamond_tool.json", ["randommobs:tornado_bunker"])
+
+
 def main():
     for name, (_, _, kind) in ITEMS.items():
         item_model(name, kind)
@@ -312,6 +596,7 @@ def main():
     for name, data in ADVANCEMENTS.items():
         advancement(name, data)
     recipes()
+    block_tags()
 
     entity_loot("tripod", [
         item_pool("randommobs:tripod_core", 1, 2),
@@ -370,6 +655,61 @@ def main():
         item_pool("randommobs:meep_feather", 1, 2),
         item_pool("minecraft:feather", 0, 1),
     ])
+    entity_loot("tornado", [])
+    entity_loot("lights", [
+        item_pool("randommobs:storm_scale", 0, 1, looting=1),
+        item_pool("minecraft:glowstone_dust", 0, 2),
+    ])
+    entity_loot("chest_mimic", [
+        item_pool("minecraft:oak_planks", 2, 6),
+        item_pool("randommobs:lock_key", 0, 1, chance=0.2),
+        item_pool("minecraft:emerald", 0, 2, looting=1),
+    ])
+    entity_loot("water_grabber", [
+        item_pool("minecraft:nautilus_shell", 0, 2, looting=1),
+        item_pool("minecraft:tropical_fish", 1, 3),
+        item_pool("randommobs:storm_scale", 1, 2),
+    ])
+    entity_loot("tank", [
+        item_pool("randommobs:tank_track", 1, 2),
+        item_pool("minecraft:iron_ingot", 3, 7),
+        item_pool("minecraft:gunpowder", 2, 5),
+    ])
+    entity_loot("siren_head", [
+        item_pool("randommobs:siren_bulb", 1, 2),
+        item_pool("minecraft:iron_ingot", 2, 5),
+        item_pool("randommobs:storm_scale", 1, 3),
+    ])
+    entity_loot("warship", [
+        item_pool("minecraft:iron_block", 2, 4),
+        item_pool("randommobs:siren_bulb", 1, 2),
+        item_pool("minecraft:tnt", 2, 6),
+    ])
+    entity_loot("circuit", [
+        item_pool("randommobs:circuit_fragment", 1, 2),
+        item_pool("minecraft:redstone", 2, 6),
+    ])
+    entity_loot("ash_hound", [
+        item_pool("minecraft:charcoal", 1, 3),
+        item_pool("minecraft:bone", 0, 2, looting=1),
+    ])
+    entity_loot("cloud_ray", [
+        item_pool("minecraft:phantom_membrane", 0, 2, looting=1),
+        item_pool("randommobs:storm_scale", 1, 2),
+    ])
+    entity_loot("bog_wretch", [
+        item_pool("minecraft:slime_ball", 1, 3),
+        item_pool("minecraft:lily_pad", 0, 2),
+    ])
+    entity_loot("lantern_wraith", [
+        item_pool("minecraft:glowstone_dust", 1, 3),
+        item_pool("minecraft:soul_torch", 0, 2),
+    ])
+    entity_loot("hollow_neighbor", [
+        item_pool("minecraft:emerald", 0, 2, looting=1),
+        item_pool("randommobs:lock_key", 0, 1, chance=0.25),
+    ])
+
 
     # ------------------------------------------------------------------ lang
     en = {"itemGroup.randommobs.main": "Random Mobs"}
@@ -402,6 +742,48 @@ def main():
     ru["biome.randommobs.bloop_trench"] = "Впадина блупа"
     en["biome.randommobs.scorched_plains"] = "Scorched Plains"
     ru["biome.randommobs.scorched_plains"] = "Выжженные равнины"
+    en["storm.randommobs.calm"] = "calm"
+    ru["storm.randommobs.calm"] = "спокойно"
+    en["storm.randommobs.warning"] = "A storm is coming. A big one."
+    ru["storm.randommobs.warning"] = "Идёт шторм. Большой."
+    en["storm.randommobs.raging"] = "The storm is here. Stay inside."
+    ru["storm.randommobs.raging"] = "Шторм пришёл. Не выходите наружу."
+    en["storm.randommobs.aftermath"] = "The storm has passed... mostly."
+    ru["storm.randommobs.aftermath"] = "Шторм прошёл... в основном."
+    en["storm.randommobs.tornado"] = "A tornado touched down nearby!"
+    ru["storm.randommobs.tornado"] = "Рядом коснулся земли торнадо!"
+    en["storm.randommobs.rain_yes"] = "raining"
+    ru["storm.randommobs.rain_yes"] = "дождь"
+    en["storm.randommobs.rain_no"] = "dry"
+    ru["storm.randommobs.rain_no"] = "сухо"
+    en["item.randommobs.storm_radio.report"] = "Radio: %s, about %s seconds left."
+    ru["item.randommobs.storm_radio.report"] = "Радио: %s, осталось около %s секунд."
+    en["item.randommobs.weather_map.report"] = "Weather map: %s (%s s), sky is %s."
+    ru["item.randommobs.weather_map.report"] = "Карта погоды: %s (%s с), на небе %s."
+    en["item.randommobs.time_clock.report"] = "Day %s. %s in %s."
+    ru["item.randommobs.time_clock.report"] = "День %s. %s через %s."
+    en["item.randommobs.time_clock.night"] = "Night"
+    ru["item.randommobs.time_clock.night"] = "Ночь"
+    en["item.randommobs.time_clock.day"] = "Day"
+    ru["item.randommobs.time_clock.day"] = "День"
+    en["block.randommobs.locked_door.locked"] = "Locked. You need a key."
+    ru["block.randommobs.locked_door.locked"] = "Заперто. Нужен ключ."
+    en["block.randommobs.casino.need_ingot"] = "The casino wants a gold ingot in your hand."
+    ru["block.randommobs.casino.need_ingot"] = "Казино хочет золотой слиток в руке."
+    en["block.randommobs.casino.jackpot"] = "JACKPOT!"
+    ru["block.randommobs.casino.jackpot"] = "ДЖЕКПОТ!"
+    en["block.randommobs.casino.win"] = "You win an emerald."
+    ru["block.randommobs.casino.win"] = "Вы выиграли изумруд."
+    en["block.randommobs.casino.small_win"] = "A few gold nuggets. Barely worth it."
+    ru["block.randommobs.casino.small_win"] = "Пара золотых самородков. Почти ничего."
+    en["block.randommobs.casino.lose"] = "You lose."
+    ru["block.randommobs.casino.lose"] = "Вы проиграли."
+    en["block.randommobs.tv.boot"] = "The television hums to life..."
+    ru["block.randommobs.tv.boot"] = "Телевизор с тихим гудением включается..."
+    en["block.randommobs.tv.title"] = "Television"
+    ru["block.randommobs.tv.title"] = "Телевизор"
+    en["block.randommobs.tv.status"] = "connecting at 56k..."
+    ru["block.randommobs.tv.status"] = "подключение на 56k..."
     for key, value in (("en_us", en), ("ru_ru", ru)):
         write(os.path.join(ASSETS, "lang", key + ".json"), value)
     print("resources generated")
