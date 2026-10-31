@@ -1,9 +1,6 @@
 {
   "type": "forge:add_spawns",
-  "biomes": [
-    "randommobs:scorched_plains",
-    "minecraft:desert"
-  ],
+  "biomes": "minecraft:desert",
   "spawners": [
     {
       "type": "randommobs:tank",

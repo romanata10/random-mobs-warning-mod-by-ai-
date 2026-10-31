@@ -678,11 +678,15 @@ def build_oil_rig_structure():
 # --------------------------------------------------------------------------- biome modifiers
 def biome_modifiers():
     def add_spawns(name, biomes, spawners):
-        write(os.path.join(DATA, "forge/biome_modifier", name + ".json"), {
-            "type": "forge:add_spawns",
-            "biomes": biomes,
-            "spawners": spawners,
-        })
+        # Forge 1.20.1 wants a single biome id or a single "#tag" string here, not a list.
+        targets = biomes if isinstance(biomes, list) else [biomes]
+        for index, biome in enumerate(targets):
+            suffix = "" if len(targets) == 1 else "_" + biome.split(":")[1].replace("/", "_")
+            write(os.path.join(DATA, "forge/biome_modifier", name + suffix + ".json"), {
+                "type": "forge:add_spawns",
+                "biomes": biome,
+                "spawners": spawners,
+            })
 
     add_spawns("spawns_overworld", "#minecraft:is_overworld", [
         spawn("randommobs:tripod", 2, 1, 1),
@@ -742,12 +746,13 @@ def biome_modifiers():
         "features": "randommobs:red_roots_patch",
         "step": "vegetal_decoration",
     })
-    write(os.path.join(DATA, "forge/biome_modifier/red_roots_swamp.json"), {
-        "type": "forge:add_features",
-        "biomes": ["minecraft:swamp", "minecraft:mangrove_swamp"],
-        "features": "randommobs:red_roots_patch",
-        "step": "vegetal_decoration",
-    })
+    for biome in ("minecraft:swamp", "minecraft:mangrove_swamp"):
+        write(os.path.join(DATA, "forge/biome_modifier/red_roots_%s.json" % biome.split(":")[1]), {
+            "type": "forge:add_features",
+            "biomes": biome,
+            "features": "randommobs:red_roots_patch",
+            "step": "vegetal_decoration",
+        })
 
 
 def main():

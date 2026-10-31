@@ -1,9 +1,6 @@
 {
   "type": "forge:add_spawns",
-  "biomes": [
-    "minecraft:deep_ocean",
-    "minecraft:deep_cold_ocean"
-  ],
+  "biomes": "minecraft:deep_ocean",
   "spawners": [
     {
       "type": "randommobs:warship",
