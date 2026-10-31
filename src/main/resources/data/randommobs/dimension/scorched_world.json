@@ -1,0 +1,11 @@
+{
+  "type": "randommobs:scorched_world",
+  "generator": {
+    "type": "minecraft:noise",
+    "settings": "minecraft:overworld",
+    "biome_source": {
+      "type": "minecraft:fixed",
+      "biome": "randommobs:scorched_plains"
+    }
+  }
+}

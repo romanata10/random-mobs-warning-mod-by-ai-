@@ -1,0 +1,103 @@
+{
+  "has_precipitation": true,
+  "temperature": 0.8,
+  "downfall": 0.9,
+  "effects": {
+    "sky_color": 2756362,
+    "fog_color": 3807762,
+    "water_color": 9382676,
+    "water_fog_color": 4855048,
+    "grass_color": 7027227,
+    "foliage_color": 9390632,
+    "mood_sound": {
+      "sound": "minecraft:ambient.cave",
+      "tick_delay": 6000,
+      "block_search_extent": 8,
+      "offset": 2.0
+    }
+  },
+  "spawners": {
+    "monster": [
+      {
+        "type": "randommobs:woodcrawler",
+        "weight": 40,
+        "minCount": 1,
+        "maxCount": 3
+      },
+      {
+        "type": "randommobs:gardener",
+        "weight": 25,
+        "minCount": 1,
+        "maxCount": 2
+      },
+      {
+        "type": "randommobs:evil_watermelon",
+        "weight": 20,
+        "minCount": 1,
+        "maxCount": 2
+      },
+      {
+        "type": "randommobs:alive_tree",
+        "weight": 12,
+        "minCount": 1,
+        "maxCount": 1
+      },
+      {
+        "type": "randommobs:giant_spider",
+        "weight": 4,
+        "minCount": 1,
+        "maxCount": 1
+      },
+      {
+        "type": "randommobs:tripod",
+        "weight": 2,
+        "minCount": 1,
+        "maxCount": 1
+      }
+    ],
+    "creature": [
+      {
+        "type": "randommobs:woodcock",
+        "weight": 12,
+        "minCount": 1,
+        "maxCount": 3
+      }
+    ],
+    "water_creature": [
+      {
+        "type": "randommobs:kraken",
+        "weight": 2,
+        "minCount": 1,
+        "maxCount": 1
+      }
+    ]
+  },
+  "spawn_costs": {},
+  "carvers": {
+    "air": [
+      "minecraft:cave",
+      "minecraft:cave_extra_underground",
+      "minecraft:canyon"
+    ]
+  },
+  "features": [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [
+      "minecraft:glow_lichen"
+    ],
+    [],
+    [
+      "randommobs:red_roots_patch",
+      "randommobs:mockery_bloom_patch",
+      "minecraft:trees_plains",
+      "minecraft:patch_grass_plain"
+    ],
+    []
+  ]
+}

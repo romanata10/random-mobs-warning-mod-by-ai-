@@ -1,0 +1,23 @@
+{
+  "display": {
+    "icon": {
+      "item": "randommobs:ufo_scrap"
+    },
+    "title": {
+      "translate": "advancement.randommobs.omg_its_ufo_in_trash_camera_from_2004.title"
+    },
+    "description": {
+      "translate": "advancement.randommobs.omg_its_ufo_in_trash_camera_from_2004.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "code": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "parent": "randommobs:root"
+}

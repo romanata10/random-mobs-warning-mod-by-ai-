@@ -1,0 +1,9 @@
+{
+  "values": [
+    "minecraft:desert",
+    "minecraft:plains",
+    "minecraft:forest",
+    "minecraft:savanna",
+    "randommobs:scorched_plains"
+  ]
+}

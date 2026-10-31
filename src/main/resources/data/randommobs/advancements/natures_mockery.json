@@ -1,0 +1,23 @@
+{
+  "display": {
+    "icon": {
+      "item": "randommobs:mockery_pod"
+    },
+    "title": {
+      "translate": "advancement.randommobs.natures_mockery.title"
+    },
+    "description": {
+      "translate": "advancement.randommobs.natures_mockery.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "code": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "parent": "randommobs:root"
+}

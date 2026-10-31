@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "randommobs:mockery_pod"
+    },
+    {
+      "item": "minecraft:ender_pearl"
+    },
+    {
+      "item": "randommobs:red_root_block"
+    }
+  ],
+  "result": {
+    "item": "randommobs:root_shard"
+  }
+}

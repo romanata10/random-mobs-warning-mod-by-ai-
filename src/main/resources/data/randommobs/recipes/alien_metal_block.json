@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "###",
+    "###",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "randommobs:alien_metal_ingot"
+    }
+  },
+  "result": {
+    "item": "randommobs:alien_metal_block"
+  }
+}

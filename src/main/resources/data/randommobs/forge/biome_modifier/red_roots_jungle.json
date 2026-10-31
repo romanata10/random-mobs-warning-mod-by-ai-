@@ -1,0 +1,6 @@
+{
+  "type": "forge:add_features",
+  "biomes": "#minecraft:is_jungle",
+  "features": "randommobs:red_roots_patch",
+  "step": "vegetal_decoration"
+}

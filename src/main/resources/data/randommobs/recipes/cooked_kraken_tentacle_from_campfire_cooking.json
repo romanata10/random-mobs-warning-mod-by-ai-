@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:campfire_cooking",
+  "ingredient": {
+    "item": "randommobs:kraken_tentacle"
+  },
+  "result": "cooked_kraken_tentacle",
+  "experience": 0.35,
+  "cookingtime": 600
+}

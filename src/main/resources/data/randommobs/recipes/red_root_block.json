@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "##",
+    "##"
+  ],
+  "key": {
+    "#": {
+      "item": "randommobs:root_seed"
+    }
+  },
+  "result": {
+    "item": "randommobs:red_root_block"
+  }
+}

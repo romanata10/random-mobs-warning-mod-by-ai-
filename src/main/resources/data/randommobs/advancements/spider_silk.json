@@ -1,0 +1,23 @@
+{
+  "display": {
+    "icon": {
+      "item": "randommobs:giant_spider_silk"
+    },
+    "title": {
+      "translate": "advancement.randommobs.spider_silk.title"
+    },
+    "description": {
+      "translate": "advancement.randommobs.spider_silk.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "code": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "parent": "randommobs:root"
+}
