@@ -25,7 +25,8 @@ OUT = os.path.join(ROOT, "tools", "preview")
 
 SUPERSAMPLE = 2
 VIEW_W, VIEW_H = 400, 440
-LIGHT = (0.45, -0.75, 0.5)  # pointing from the upper front-left towards the model
+LIGHT = (0.45, -0.75, 0.5)  # key light, from the upper front-left
+FILL = (-0.6, 0.3, -0.55)   # cool bounce from the opposite side
 
 
 def norm(v):
@@ -99,8 +100,10 @@ def build_quads(spec, texture, scale):
                     corners.append(tuple(c * scale for c in world))
                     uvs.append((rx + sx * (rw - 1), ry + sy * (rh - 1)))
                 normal = norm(n)
-                lambert = max(0.0, sum(normal[i] * LIGHT[i] for i in range(3)))
-                mul = 0.62 + 0.5 * lambert
+                key = max(0.0, sum(normal[i] * LIGHT[i] for i in range(3)))
+                fill = max(0.0, sum(normal[i] * FILL[i] for i in range(3)))
+                ambient = 0.46 + 0.14 * max(0.0, -normal[1])
+                mul = ambient + 0.52 * key + 0.16 * fill
                 tris.append(((corners[0], corners[1], corners[2]),
                              (uvs[0], uvs[1], uvs[2]), mul, tw, th))
                 tris.append(((corners[0], corners[2], corners[3]),

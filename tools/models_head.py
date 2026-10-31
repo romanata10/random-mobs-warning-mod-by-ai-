@@ -69,6 +69,95 @@ def aim_local(parent_rot, world_direction):
     return aim(local)
 
 
+def blk(pivot_blocks, x, top_blocks, z, w, thick_blocks, d, color, style="noise",
+        face=None, glow=False):
+    """Box addressed by world height: `top_blocks` is where its top edge sits, and
+    `thick_blocks` is its height. `pivot_blocks` is the pivot height of its part."""
+    height = max(1, int(round(thick_blocks * 16)))
+    y = int(round(up(top_blocks) - up(pivot_blocks)))
+    return box(x, y, z, w, height, d, color, style, face=face, glow=glow)
+
+
+# ------------------------------------------------------------------ detail helpers
+def ridge(cx, cy, cz, length, out, thick, count, color, style="chitin", axis="z",
+          taper=True, face=None):
+    """A row of spines/fins/plates along an axis (back ridges, hull plating, antennae)."""
+    boxes = []
+    step = length / float(max(1, count))
+    for i in range(count):
+        k = 1.0
+        if taper:
+            k = 0.55 + 0.45 * (1.0 - abs(i - (count - 1) / 2.0) / max(1.0, count / 2.0))
+        h = max(1, int(round(out * k)))
+        t = max(1, int(round(thick * k)))
+        pos = i * step
+        if axis == "z":
+            boxes.append(box(cx - t // 2, cy - h, cz + int(pos), t, h, max(1, int(step)),
+                             color, style, face=face))
+        elif axis == "x":
+            boxes.append(box(cx + int(pos), cy - h, cz - t // 2, max(1, int(step)), h, t,
+                             color, style, face=face))
+        else:
+            boxes.append(box(cx - t // 2, cy - h, cz + int(pos), t, max(1, int(step)), h,
+                             color, style, face=face))
+    return boxes
+
+
+def teeth_row(cx, cy, cz, width, height, depth, count, color, style="bone", upper=True):
+    """A row of triangular-ish teeth hanging from (upper) or standing on a jaw line."""
+    boxes = []
+    step = max(2, int(round(width / float(max(1, count)))))
+    for i in range(count):
+        h = max(1, height - (i % 2) - (1 if i in (0, count - 1) else 0))
+        x = cx + i * (width - step) // max(1, count - 1) if count > 1 else cx
+        y = cy if upper else cy - h
+        boxes.append(box(int(x), int(y), cz, max(1, step - 1), h, depth, color, style))
+    return boxes
+
+
+def toes(cx, cy, cz, spread, length, thick, count, color, style="chitin", forward=True):
+    """Splayed toes/claws at the end of a foot."""
+    boxes = []
+    for i in range(count):
+        off = int(round((i - (count - 1) / 2.0) * spread))
+        if forward:
+            boxes.append(box(cx + off - thick // 2, cy, cz - length, thick, max(1, thick - 1),
+                             length, color, style))
+        else:
+            boxes.append(box(cx + off - thick // 2, cy, cz, thick, max(1, thick - 1),
+                             length, color, style))
+    return boxes
+
+
+def bolts(cx, cy, cz, along, count, size, color="#6f7378", style="metal", axis="x"):
+    """Evenly spaced rivets along one edge."""
+    boxes = []
+    step = along / float(max(1, count))
+    for i in range(count):
+        p = int(round(i * step))
+        if axis == "x":
+            boxes.append(box(cx + p, cy, cz, size, size, size, color, style))
+        elif axis == "y":
+            boxes.append(box(cx, cy + p, cz, size, size, size, color, style))
+        else:
+            boxes.append(box(cx, cy, cz + p, size, size, size, color, style))
+    return boxes
+
+
+def hose(cx, cy, cz, length, size, color, style="metal", axis="y", segments=4, sag=0.0):
+    """A cable/pipe split into segments so it can bend with the body."""
+    boxes = []
+    step = length / float(max(1, segments))
+    for i in range(segments):
+        off = sag * math.sin(math.pi * i / max(1, segments - 1))
+        if axis == "y":
+            boxes.append(box(cx + off, cy + int(i * step), cz, size, int(step) + 1, size, color, style))
+        else:
+            boxes.append(box(cx, cy + int(off), cz + int(i * step), size, size, int(step) + 1,
+                             color, style))
+    return boxes
+
+
 GROUND = 24.0
 
 
