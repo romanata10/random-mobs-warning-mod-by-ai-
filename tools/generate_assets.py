@@ -114,128 +114,241 @@ def next_pow2(v):
 
 
 # --------------------------------------------------------------------------- materials
+def _edge_wear(x, y, w, h):
+    """1.0 on the very border of a face, falling off inwards: worn, bevelled edges."""
+    d = min(x, y, w - 1 - x, h - 1 - y)
+    return max(0.0, 1.0 - d / 3.0)
+
+
+def _seams(x, y, step_x, step_y, width=1):
+    return (x % step_x) < width or (y % step_y) < width
+
+
 def material_px(style, base, x, y, w, h, rng):
-    """Returns a color for pixel (x,y) inside a face of size (w,h)."""
-    t = y / max(h - 1, 1)
-    if style == "metal":
-        grain = fbm(x, y, 11, 5.0)
-        c = tone(base, 0.24 - 0.5 * t + (grain - 0.5) * 0.28)
-        if x % 6 == 0:
-            c = shade(c, 0.9)
-        if (x % 11 == 3) and (y % 9 == 4):
-            c = shade(c, 1.25)
-        return shade(c, 1.0 + rng.uniform(-0.05, 0.05))
-    if style == "milmetal":
-        c = shade(base, 1.05 - 0.12 * t)
-        if ((x // 7) + (y // 9)) % 3 == 0:
-            c = mix(c, shade(base, 0.7), 0.35)
-        if rng.random() < 0.06:
-            c = shade(c, 1.2)
-        return c
-    if style in ("planks", "wood"):
-        row = (y // 5) % 2
-        c = shade(base, 1.04 if row == 0 else 0.9)
+    """Colour of one texel of a material. Palettes lean warm in the light and cool in
+    the shadow so the cubes stop looking like flat plastic."""
+    t = y / max(h - 1, 1)                      # 0 at the top of the face, 1 at the bottom
+    dark = shade(base, 0.72)
+    light = tone(base, 0.55)
+    n1 = fbm(x, y, 17, 5.5) - 0.5
+    n2 = fbm(x, y, 91, 2.2) - 0.5
+
+    if style in ("metal", "milmetal"):
+        streak = fbm(x * 0.4, y * 5.0, 11, 3.0) - 0.5
+        c = tone(base, 0.2 - 0.3 * t + streak * 0.3 + n1 * 0.12)
         if y % 5 == 0:
-            c = shade(c, 0.78)
-        if style == "wood" and (x + y * 3) % 13 == 0:
-            c = shade(c, 0.72)
-        return shade(c, 1.0 + rng.uniform(-0.05, 0.05))
-    if style == "bark":
-        c = shade(base, 1.0 + 0.12 * math.sin(x * 0.9))
-        if y % 7 == 0:
-            c = shade(c, 0.75)
-        return shade(c, 1.0 + rng.uniform(-0.07, 0.07))
+            c = shade(c, 1.05)                      # brushed highlight
+        if _seams(x, y, 19, 13):
+            c = shade(c, 0.84)                      # panel seam
+        if _seams(x, y, 19, 13, 2):
+            c = shade(c, 1.08)
+        if (x % 19 == 5 and y % 13 == 5) or (x % 19 == 14 and y % 13 == 9):
+            c = mix(c, light, 0.7)                  # rivet
+        if style == "milmetal" and fbm(x, y, 44, 3.0) > 0.72:
+            c = mix(c, (86, 92, 62), 0.35)          # camouflage blotch
+        if _edge_wear(x, y, w, h) > 0.7:
+            c = mix(c, light, 0.35)
+        return shade(c, 1.0 + rng.uniform(-0.04, 0.04))
+
+    if style in ("planks", "wood", "bark"):
+        plank_h = 8 if style == "planks" else 10
+        row = (y // plank_h) % 2
+        grain = 0.06 * math.sin(x * 0.7 + y * 0.3) + n1 * 0.18
+        c = tone(base, (0.1 if row == 0 else -0.06) + grain - 0.16 * t)
+        if y % plank_h == 0:
+            c = shade(c, 0.62)                      # gap between planks
+        if (y % plank_h) == 1:
+            c = mix(c, light, 0.25)                 # lit lip
+        if style != "planks" and (x * 3 + y * 7) % 37 == 0:
+            c = shade(c, 0.78)                      # knot
+        if style == "bark":
+            c = shade(c, 0.94 + 0.1 * math.sin(y * 0.9 + x * 0.2))
+        if _edge_wear(x, y, w, h) > 0.66:
+            c = mix(c, light, 0.28)
+        return shade(c, 1.0 + rng.uniform(-0.04, 0.04))
+
     if style == "chitin":
-        band = 0.2 * math.sin(y * 0.5) + (fbm(x, y, 33, 6.0) - 0.5) * 0.3
-        c = tone(base, band + 0.1 - 0.35 * t)
-        if y % 6 == 0:
-            c = shade(c, 0.7)
+        plate = 9
+        rel = y % plate
+        c = tone(base, 0.16 - 0.28 * t + n1 * 0.2)
+        if rel == 0:
+            c = shade(c, 0.6)                       # segment seam
+        if rel == 1:
+            c = mix(c, light, 0.4)                  # glossy ridge
+        if rel > 1 and rel < 4:
+            c = shade(c, 1.06)                      # shell sheen
+        if fbm(x, y, 33, 7.0) > 0.74:
+            c = mix(c, light, 0.22)                 # speckle
+        if _edge_wear(x, y, w, h) > 0.7:
+            c = mix(c, light, 0.3)
+        return shade(c, 1.0 + rng.uniform(-0.04, 0.04))
+
+    if style in ("wet", "flesh"):
+        mottle = fbm(x, y, 71 if style == "wet" else 41, 2.8)
+        c = tone(base, 0.24 - 0.4 * t + (mottle - 0.5) * 0.5)
+        if style == "flesh":
+            if (x + y * 2) % 23 == 0:
+                c = mix(c, shade(base, 0.55), 0.45)     # vein
+            if rng.random() < 0.05:
+                c = mix(c, (196, 96, 116), 0.3)
+        else:
+            if rng.random() < 0.04:
+                c = mix(c, light, 0.6)                  # wet glint
+            if (x * 5 - y * 3) % 41 == 0:
+                c = shade(c, 0.86)
         return shade(c, 1.0 + rng.uniform(-0.05, 0.05))
-    if style == "flesh":
-        c = tone(base, 0.25 - 0.55 * t + (fbm(x, y, 41, 3.0) - 0.5) * 0.5)
-        if rng.random() < 0.08:
-            c = shade(c, 0.78)
-        if rng.random() < 0.05:
-            c = mix(c, (190, 90, 110), 0.35)
-        return shade(c, 1.0 + rng.uniform(-0.06, 0.06))
-    if style == "jelly":
-        d = math.hypot((x / max(w, 1)) - 0.5, (y / max(h, 1)) - 0.5)
-        return shade(base, 1.16 - 0.5 * d + rng.uniform(-0.03, 0.03))
+
+    if style == "skin":
+        pores = fbm(x, y, 53, 3.2)
+        c = tone(base, 0.14 - 0.3 * t + (pores - 0.5) * 0.3)
+        if (x * 7 + y * 3) % 29 == 0:
+            c = shade(c, 0.86)                      # wart / pore
+        if (x * 3 + y * 11) % 53 == 0:
+            c = mix(c, light, 0.3)
+        return shade(c, 1.0 + rng.uniform(-0.04, 0.04))
+
+    if style == "scales":
+        cell_x, cell_y = 6, 5
+        row = (y // cell_y) % 2
+        sx = (x + (cell_x // 2 if row else 0)) % cell_x
+        sy = y % cell_y
+        c = tone(base, 0.12 - 0.26 * t + n1 * 0.2)
+        if sy == 0:
+            c = shade(c, 0.66)                      # scale gap
+        if sx == 1:
+            c = mix(c, light, 0.35)                 # scale rim light
+        if sy == cell_y - 1:
+            c = shade(c, 0.9)
+        return shade(c, 1.0 + rng.uniform(-0.04, 0.04))
+
+    if style == "armor":
+        c = tone(base, 0.16 - 0.28 * t + n1 * 0.16)
+        if _seams(x, y, 12, 12):
+            c = shade(c, 0.7)                       # armour plate seam
+        if _seams(x, y, 12, 12, 2):
+            c = mix(c, light, 0.3)
+        if (x % 12 == 3 and y % 12 == 9) or (x % 12 == 9 and y % 12 == 3):
+            c = mix(c, light, 0.5)                  # bolt
+        if fbm(x, y, 8, 2.0) > 0.7:
+            c = mix(c, (60, 62, 48), 0.3)           # dirt
+        return shade(c, 1.0 + rng.uniform(-0.04, 0.04))
+
     if style == "fur":
-        c = tone(base, 0.18 - 0.3 * t + (fbm(x, y, 21, 2.4) - 0.5) * 0.7)
+        strand = fbm(x * 0.7, y * 3.5, 21, 2.0) - 0.5
+        c = tone(base, 0.16 - 0.26 * t + strand * 0.55)
         if (x * 3 + y * 5) % 11 == 0:
-            c = shade(c, 1.18)
+            c = mix(c, light, 0.4)                  # guard hair
         if (x + y) % 9 == 0:
             c = shade(c, 0.82)
+        if _edge_wear(x, y, w, h) > 0.72:
+            c = shade(c, 1.12)                      # fluffy silhouette
         return shade(c, 1.0 + rng.uniform(-0.05, 0.05))
-    if style == "sand":
-        c = shade(base, 0.95 + 0.1 * math.sin((x + y * 2) * 0.35))
-        if rng.random() < 0.1:
-            c = shade(c, 1.1)
-        return shade(c, 1.0 + rng.uniform(-0.04, 0.04))
+
+    if style in ("sand", "ash"):
+        speck = rng.random()
+        c = shade(base, 0.94 + 0.1 * math.sin((x + y * 2) * 0.35) + n1 * 0.14)
+        if speck < 0.08:
+            c = mix(c, light, 0.45)
+        if speck > 0.93:
+            c = shade(c, 0.76)
+        if style == "ash" and rng.random() < 0.02:
+            c = mix(c, (255, 138, 64), 0.65)        # ember
+        return shade(c, 1.0 + rng.uniform(-0.03, 0.03))
+
     if style == "melon":
-        stripe = (x // 4) % 2
-        c = shade(base, 0.72 if stripe else 1.12)
-        return shade(c, 1.0 + rng.uniform(-0.05, 0.05))
-    if style == "leaves":
-        c = shade(base, 1.0 + rng.uniform(-0.18, 0.18))
-        if rng.random() < 0.18:
-            c = shade(c, 0.7)
-        return c
-    if style == "feather":
-        c = shade(base, 1.0 + 0.08 * math.sin(y * 1.2))
-        if (y % 4) == 0 and (x + y // 4) % 3 == 0:
-            c = shade(c, 0.82)
-        return shade(c, 1.0 + rng.uniform(-0.04, 0.04))
-    if style == "skin":
-        c = tone(base, 0.16 - 0.34 * t + (fbm(x, y, 53, 4.0) - 0.5) * 0.34)
-        if (x * 7 + y * 3) % 23 == 0:
+        stripe = ((x // 5) % 2) == 0
+        c = shade(base, 1.14 if stripe else 0.74)
+        if (x % 5) == 0:
             c = shade(c, 0.88)
-        return shade(c, 1.0 + rng.uniform(-0.03, 0.03))
-    if style == "lens":
-        d = math.hypot((x / max(w, 1)) - 0.5, (y / max(h, 1)) - 0.5) * 2.0
-        return clamp(mix((255, 255, 255), base, min(1.0, d * 0.9)))
-    if style == "circuit":
-        c = shade(base, 1.0)
-        if x % 8 == 0 or y % 8 == 0:
-            c = shade(c, 0.78)
-        if (x % 8 == 0 and y % 16 == 5) or (y % 8 == 0 and x % 16 == 3):
-            c = mix(c, (255, 60, 60), 0.6)
-        return shade(c, 1.0 + rng.uniform(-0.03, 0.03))
-    if style == "ash":
-        c = shade(base, 1.0 + rng.uniform(-0.16, 0.16))
-        if rng.random() < 0.03:
-            c = mix(c, (255, 130, 60), 0.5)
+        if fbm(x, y, 12, 6.0) > 0.68:
+            c = mix(c, light, 0.2)
+        return shade(c, 1.0 + rng.uniform(-0.04, 0.04))
+
+    if style == "leaves":
+        c = tone(base, 0.1 - 0.3 * t + n1 * 0.5)
+        if rng.random() < 0.16:
+            c = shade(c, 0.66)                      # dark gaps
+        if (x * 2 + y) % 7 == 0:
+            c = mix(c, light, 0.35)                 # leaf vein
         return c
-    if style == "cloud":
-        c = shade(base, 1.0 + 0.08 * math.sin(x * 0.7 + y * 0.9))
-        return shade(c, 1.0 + rng.uniform(-0.04, 0.04))
-    if style == "wet":
-        c = tone(base, 0.3 - 0.6 * t + (fbm(x, y, 71, 2.6) - 0.5) * 0.4)
-        if rng.random() < 0.06:
-            c = shade(c, 1.4)
-        return shade(c, 1.0 + rng.uniform(-0.06, 0.06))
-    if style == "cloth":
-        c = shade(base, 0.94 + 0.08 * ((x + y) % 4 < 2))
-        if y % 10 == 0:
-            c = shade(c, 0.86)
-        return shade(c, 1.0 + rng.uniform(-0.04, 0.04))
-    if style == "bone":
-        c = tone(base, 0.1 - 0.2 * t + (fbm(x, y, 61, 3.4) - 0.5) * 0.3)
-        if (x * 5 + y * 3) % 29 == 0:
-            c = shade(c, 0.8)
+
+    if style == "feather":
+        c = tone(base, 0.12 - 0.24 * t + 0.1 * math.sin(y * 0.9))
+        if (y % 5) == 0 and (x + y // 5) % 3 == 0:
+            c = shade(c, 0.78)                      # barb shadow
+        if (y % 5) == 2:
+            c = mix(c, light, 0.3)                  # barb sheen
         return shade(c, 1.0 + rng.uniform(-0.03, 0.03))
+
+    if style == "cloth":
+        weave = 1.0 if ((x + y) % 4 < 2) else 0.93
+        c = shade(base, weave + n1 * 0.1)
+        if y % 11 == 0:
+            c = shade(c, 0.84)                      # fold shadow
+        if _edge_wear(x, y, w, h) > 0.7:
+            c = mix(c, light, 0.22)                 # frayed hem
+        return shade(c, 1.0 + rng.uniform(-0.04, 0.04))
+
+    if style == "bone":
+        c = tone(base, 0.12 - 0.22 * t + n1 * 0.24)
+        if (x * 5 + y * 3) % 31 == 0:
+            c = shade(c, 0.78)                      # crack
+        if (x - y) % 17 == 0:
+            c = mix(c, light, 0.25)
+        return shade(c, 1.0 + rng.uniform(-0.03, 0.03))
+
     if style == "storm":
         ang = math.atan2(y - h / 2.0, x - w / 2.0)
-        c = shade(base, 1.0 + 0.22 * math.sin(ang * 4 + math.hypot(x, y) * 0.25))
-        return shade(c, 1.0 + rng.uniform(-0.05, 0.05))
+        radial = math.hypot(x - w / 2.0, y - h / 2.0) / max(1.0, math.hypot(w, h) * 0.5)
+        swirl = math.sin(ang * 3.0 + radial * 5.0)
+        c = tone(base, 0.16 - 0.3 * t + swirl * 0.2 + n1 * 0.25)
+        if swirl > 0.85:
+            c = mix(c, (250, 252, 255), 0.4)         # wind streak
+        return shade(c, 1.0 + rng.uniform(-0.04, 0.04))
+
+    if style == "cloud":
+        puff = fbm(x, y, 7, 4.0)
+        c = tone(base, 0.2 - 0.34 * t + (puff - 0.5) * 0.4)
+        if puff > 0.72:
+            c = mix(c, (255, 255, 255), 0.35)
+        if puff < 0.3:
+            c = shade(c, 0.86)
+        return shade(c, 1.0 + rng.uniform(-0.03, 0.03))
+
+    if style == "lens":
+        d = math.hypot(x / max(w, 1) - 0.5, y / max(h, 1) - 0.5) * 2.0
+        c = mix((255, 255, 255), base, min(1.0, d * 0.95))
+        if d < 0.35:
+            c = mix(c, (255, 255, 255), 0.6)        # hot core
+        return clamp(c)
+
+    if style == "circuit":
+        c = shade(base, 1.0 + n1 * 0.08)
+        if x % 7 == 0 or y % 7 == 0:
+            c = shade(c, 0.76)                      # trace channel
+        if (x % 7 == 0 and y % 14 == 5) or (y % 7 == 0 and x % 14 == 9):
+            c = mix(c, (255, 84, 84), 0.7)          # glowing node
+        if _seams(x, y, 28, 28):
+            c = shade(c, 0.66)                      # board edge
+        return shade(c, 1.0 + rng.uniform(-0.03, 0.03))
+
     if style == "rust":
-        c = shade(base, 1.0 + rng.uniform(-0.12, 0.12))
-        if rng.random() < 0.12:
-            c = mix(c, (150, 90, 50), 0.55)
+        c = shade(base, 0.95 + n1 * 0.3)
+        if rng.random() < 0.14:
+            c = mix(c, (154, 92, 52), 0.6)          # rust bloom
+        if rng.random() < 0.05:
+            c = mix(c, light, 0.4)
         return c
+
+    if style == "gem":
+        d = math.hypot(x / max(w, 1) - 0.5, y / max(h, 1) - 0.5) * 2.0
+        c = mix(base, (255, 255, 255), max(0.0, 0.55 - d * 0.55))
+        if (x + y) % 9 == 0:
+            c = mix(c, light, 0.35)
+        return clamp(c)
+
     # noise / default
-    c = tone(base, 0.12 - 0.3 * t + (fbm(x, y, 91, 4.2) - 0.5) * 0.36)
+    c = tone(base, 0.1 - 0.26 * t + n1 * 0.34 + n2 * 0.1)
     return shade(c, 1.0 + rng.uniform(-0.03, 0.03))
 
 
@@ -458,37 +571,35 @@ def paint_box(img, u, v, w, h, d, spec, rng):
     px = img.load()
 
     faces = face_rects(u, v, w, h, d)
-
-    shiny = style in ("metal", "milmetal", "lens", "circuit", "wet", "storm")
-    seed = sum(ord(ch) for ch in style) * 7 + w * 13 + h * 3 + d
+    # hoisted out of the per-pixel loop: the light each face receives
+    light = {"up": 1.16, "down": 0.7, "west": 0.94, "east": 0.88,
+             "north": 1.02, "south": 0.84}
     for name, (fx, fy, fw, fh) in faces.items():
         if fw <= 0 or fh <= 0:
             continue
-        light = {"up": 1.14, "down": 0.72, "west": 0.9, "east": 0.9,
-                 "north": 1.0, "south": 0.85}[name]
+        lit = light[name]
         for yy in range(fh):
             for xx in range(fw):
                 c = material_px(style, base, xx, yy, fw, fh, rng)
-                # rounded shading: darker towards the edges of the face
-                ex = min(xx, fw - 1 - xx) / max(1.0, fw * 0.18)
-                ey = min(yy, fh - 1 - yy) / max(1.0, fh * 0.18)
-                border = min(1.0, min(ex, ey))
-                c = shade(c, 0.8 + 0.2 * border)
-                # gentle vertical gradient on side faces
+                # baked ambient occlusion: every face darkens towards its edges, which
+                # gives the cubes a soft rounded read and separates stacked parts
+                edge = min(xx, yy, fw - 1 - xx, fh - 1 - yy)
+                ao = 0.82 + 0.18 * min(1.0, edge / 4.0)
                 if name not in ("up", "down"):
-                    c = shade(c, 1.05 - 0.1 * (yy / max(1, fh - 1)))
-                if shiny and name not in ("up", "down"):
-                    streak = (xx + (fh - yy)) / max(1.0, fw + fh)
-                    if 0.55 < streak < 0.7:
-                        c = shade(c, 1.16)
+                    ao *= 0.94 + 0.06 * (yy / max(1, fh - 1))
                 if glow:
-                    c = shade(c, 1.22)
-                px[fx + xx, fy + yy] = boost(clamp(shade(c, light))) + (255,)
+                    d2 = math.hypot((xx / max(1, fw - 1)) - 0.5, (yy / max(1, fh - 1)) - 0.5) * 2.0
+                    ao *= 1.22 - 0.28 * min(1.0, d2)
+                c = shade(c, ao * lit)
+                if edge == 0:
+                    c = mix(c, (255, 255, 255), 0.1)      # bevelled rim light
+                px[fx + xx, fy + yy] = boost(clamp(c)) + (255,)
 
     draw = ImageDraw.Draw(img)
-    edge = clamp(shade(base, 0.62)) + (200,)
+    edge = clamp(shade(base, 0.55)) + (190,)
     for name, (fx, fy, fw, fh) in faces.items():
-        draw.rectangle([fx, fy, fx + fw - 1, fy + fh - 1], outline=edge)
+        if fw > 0 and fh > 0:
+            draw.rectangle([fx, fy, fx + fw - 1, fy + fh - 1], outline=edge)
 
     if face:
         fx, fy, fw, fh = faces["north"]
