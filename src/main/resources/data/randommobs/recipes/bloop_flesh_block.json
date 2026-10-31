@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "##",
+    "##"
+  ],
+  "key": {
+    "#": {
+      "item": "randommobs:bloop_eye"
+    }
+  },
+  "result": {
+    "item": "randommobs:bloop_flesh_block"
+  }
+}

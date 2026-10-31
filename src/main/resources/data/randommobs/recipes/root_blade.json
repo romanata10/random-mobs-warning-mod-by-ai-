@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " P ",
+    " M ",
+    " S "
+  ],
+  "key": {
+    "P": {
+      "item": "randommobs:mockery_pod"
+    },
+    "M": {
+      "item": "randommobs:alien_metal_ingot"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    }
+  },
+  "result": {
+    "item": "randommobs:root_blade"
+  }
+}

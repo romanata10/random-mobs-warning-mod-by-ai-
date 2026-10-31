@@ -1,0 +1,23 @@
+{
+  "display": {
+    "icon": {
+      "item": "randommobs:tripod_core"
+    },
+    "title": {
+      "translate": "advancement.randommobs.kill_tripod.title"
+    },
+    "description": {
+      "translate": "advancement.randommobs.kill_tripod.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "code": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "parent": "randommobs:root"
+}

@@ -1,0 +1,23 @@
+{
+  "display": {
+    "icon": {
+      "item": "randommobs:bloop_eye"
+    },
+    "title": {
+      "translate": "advancement.randommobs.its_not_iceberg.title"
+    },
+    "description": {
+      "translate": "advancement.randommobs.its_not_iceberg.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "code": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "parent": "randommobs:root"
+}

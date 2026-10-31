@@ -1,0 +1,61 @@
+{
+  "has_precipitation": false,
+  "temperature": 2.0,
+  "downfall": 0.0,
+  "effects": {
+    "sky_color": 7027227,
+    "fog_color": 5909010,
+    "water_color": 3811866,
+    "water_fog_color": 2759184,
+    "grass_color": 9071162,
+    "foliage_color": 8018474
+  },
+  "spawners": {
+    "monster": [
+      {
+        "type": "randommobs:sand_worm",
+        "weight": 25,
+        "minCount": 1,
+        "maxCount": 2
+      },
+      {
+        "type": "randommobs:tripod",
+        "weight": 10,
+        "minCount": 1,
+        "maxCount": 1
+      },
+      {
+        "type": "randommobs:ufo",
+        "weight": 6,
+        "minCount": 1,
+        "maxCount": 1
+      }
+    ],
+    "creature": [],
+    "water_creature": []
+  },
+  "spawn_costs": {},
+  "carvers": {
+    "air": [
+      "minecraft:cave",
+      "minecraft:cave_extra_underground",
+      "minecraft:canyon"
+    ]
+  },
+  "features": [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [
+      "minecraft:patch_dead_bush",
+      "randommobs:red_roots_patch"
+    ],
+    []
+  ]
+}

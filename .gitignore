@@ -1,0 +1,22 @@
+# gradle / build
+.gradle/
+build/
+out/
+mcmodsrepo/
+run/
+run-data/
+src/generated/resources/
+
+# ide
+.idea/
+*.iml
+.vscode/
+.eclipse/
+.settings/
+.classpath
+.project
+
+# misc
+*.log
+tools/_icons.png
+tools/__pycache__/

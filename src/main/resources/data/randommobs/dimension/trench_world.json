@@ -1,0 +1,11 @@
+{
+  "type": "randommobs:bloop_trench",
+  "generator": {
+    "type": "minecraft:noise",
+    "settings": "minecraft:overworld",
+    "biome_source": {
+      "type": "minecraft:fixed",
+      "biome": "randommobs:bloop_trench"
+    }
+  }
+}

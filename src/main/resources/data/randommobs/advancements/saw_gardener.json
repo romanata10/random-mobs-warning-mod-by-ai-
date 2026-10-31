@@ -1,0 +1,23 @@
+{
+  "display": {
+    "icon": {
+      "item": "randommobs:root_liana"
+    },
+    "title": {
+      "translate": "advancement.randommobs.saw_gardener.title"
+    },
+    "description": {
+      "translate": "advancement.randommobs.saw_gardener.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "code": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "parent": "randommobs:root"
+}

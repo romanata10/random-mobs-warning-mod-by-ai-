@@ -1,0 +1,23 @@
+{
+  "display": {
+    "icon": {
+      "item": "randommobs:kraken_tentacle"
+    },
+    "title": {
+      "translate": "advancement.randommobs.kill_kraken.title"
+    },
+    "description": {
+      "translate": "advancement.randommobs.kill_kraken.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "code": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "parent": "randommobs:root"
+}
