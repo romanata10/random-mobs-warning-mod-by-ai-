@@ -1,0 +1,52 @@
+{
+  "entity.randommobs.tripod.ambient": {
+    "subtitle": "subtitles.entity.randommobs.tripod.ambient",
+    "sounds": [
+      {
+        "name": "minecraft:entity/ravager/roar",
+        "volume": 1.0,
+        "pitch": 0.7
+      }
+    ]
+  },
+  "entity.randommobs.tripod.hurt": {
+    "subtitle": "subtitles.entity.randommobs.tripod.hurt",
+    "sounds": [
+      {
+        "name": "minecraft:entity/iron_golem/hurt",
+        "volume": 1.0,
+        "pitch": 0.6
+      }
+    ]
+  },
+  "entity.randommobs.tripod.death": {
+    "subtitle": "subtitles.entity.randommobs.tripod.death",
+    "sounds": [
+      {
+        "name": "minecraft:entity/iron_golem/death",
+        "volume": 1.0,
+        "pitch": 0.55
+      }
+    ]
+  },
+  "entity.randommobs.woodcrawler.hurt": {
+    "subtitle": "subtitles.entity.randommobs.woodcrawler.hurt",
+    "sounds": [
+      {
+        "name": "minecraft:block/bamboo_wood/hit",
+        "volume": 1.0,
+        "pitch": 0.8
+      }
+    ]
+  },
+  "entity.randommobs.woodcrawler.death": {
+    "subtitle": "subtitles.entity.randommobs.woodcrawler.death",
+    "sounds": [
+      {
+        "name": "minecraft:block/bamboo_wood/break",
+        "volume": 1.0,
+        "pitch": 0.85
+      }
+    ]
+  }
+}

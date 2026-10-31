@@ -1,0 +1,23 @@
+{
+  "entity.randommobs.tripod": "Tripod",
+  "entity.randommobs.woodcrawler": "Woodcrawler",
+
+  "item.randommobs.tripod_spawn_egg": "Tripod Spawn Egg",
+  "item.randommobs.woodcrawler_spawn_egg": "Woodcrawler Spawn Egg",
+
+  "effect.randommobs.root_virus": "Root Virus",
+  "effect.randommobs.root_virus.description": "The roots are spreading inside you... Drink milk!",
+
+  "advancements.randommobs.oh_thats_just_fish.title": "Oh that just fish",
+  "advancements.randommobs.oh_thats_just_fish.description": "Somehow submerge a tripod underwater",
+  "advancements.randommobs.root_virus.title": "The Roots Are Inside You",
+  "advancements.randommobs.root_virus.description": "Get infected with the Root Virus by a woodcrawler",
+
+  "message.randommobs.infected": "§8[§4Random Mobs§8] §cThe Root Virus is spreading inside you... §7(quick — drink milk!)",
+
+  "subtitles.entity.randommobs.tripod.ambient": "Tripod bellows",
+  "subtitles.entity.randommobs.tripod.hurt": "Tripod damaged",
+  "subtitles.entity.randommobs.tripod.death": "Tripod falls",
+  "subtitles.entity.randommobs.woodcrawler.hurt": "Woodcrawler creaks",
+  "subtitles.entity.randommobs.woodcrawler.death": "Woodcrawler collapses"
+}

@@ -1,0 +1,33 @@
+{
+  "parent": "minecraft:adventure/root",
+  "display": {
+    "icon": {
+      "item": "minecraft:azalea"
+    },
+    "title": {
+      "translate": "advancements.randommobs.root_virus.title"
+    },
+    "description": {
+      "translate": "advancements.randommobs.root_virus.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "infected": {
+      "trigger": "minecraft:effects_changed",
+      "conditions": {
+        "effects": {
+          "randommobs:root_virus": {}
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "infected"
+    ]
+  ]
+}

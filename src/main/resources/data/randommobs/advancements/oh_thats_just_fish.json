@@ -1,0 +1,31 @@
+{
+  "parent": "minecraft:story/root",
+  "display": {
+    "icon": {
+      "item": "minecraft:water_bucket"
+    },
+    "title": {
+      "translate": "advancements.randommobs.oh_thats_just_fish.title"
+    },
+    "description": {
+      "translate": "advancements.randommobs.oh_thats_just_fish.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "fish": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "fish"
+    ]
+  ],
+  "rewards": {
+    "experience": 100
+  }
+}

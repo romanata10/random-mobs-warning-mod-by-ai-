@@ -1,0 +1,23 @@
+{
+  "entity.randommobs.tripod": "Тринога",
+  "entity.randommobs.woodcrawler": "Вудкраулер",
+
+  "item.randommobs.tripod_spawn_egg": "Яйцо призыва триноги",
+  "item.randommobs.woodcrawler_spawn_egg": "Яйцо призыва вудкраулера",
+
+  "effect.randommobs.root_virus": "Вирус корней",
+  "effect.randommobs.root_virus.description": "Корни распространяются внутри вас... Выпейте молоко!",
+
+  "advancements.randommobs.oh_thats_just_fish.title": "Да это же просто рыба",
+  "advancements.randommobs.oh_thats_just_fish.description": "Каким-либо образом погрузите триногу под воду",
+  "advancements.randommobs.root_virus.title": "Корни уже внутри вас",
+  "advancements.randommobs.root_virus.description": "Заразитесь вирусом корней от вудкраулера",
+
+  "message.randommobs.infected": "§8[§4Random Mobs§8] §cВирус корней распространяется внутри вас... §7(быстрее — выпейте молоко!)",
+
+  "subtitles.entity.randommobs.tripod.ambient": "Тринога трубит",
+  "subtitles.entity.randommobs.tripod.hurt": "Тринога повреждена",
+  "subtitles.entity.randommobs.tripod.death": "Тринога падает",
+  "subtitles.entity.randommobs.woodcrawler.hurt": "Вудкраулер трещит",
+  "subtitles.entity.randommobs.woodcrawler.death": "Вудкраулер рассыпается"
+}

@@ -1,0 +1,32 @@
+modLoader="javafml"
+loaderVersion="${loader_version_range}"
+license="${mod_license}"
+issueTrackerURL="https://github.com/romanata10/random-mobs-warning-mod-by-ai-/issues"
+
+[[mods]]
+modId="${mod_id}"
+version="${mod_version}"
+displayName="${mod_name}"
+authors="${mod_authors}"
+logoFile="randommobs_logo.png"
+description='''
+${mod_description}
+
+Adds two new mobs:
+- Tripod (War of the Worlds): a giant three-legged war machine with a heat ray. It does not like water at all.
+- Woodcrawler (Gemini Home Entertainment): a tall wooden creature. If it hits you, you get infected with the Root Virus.
+'''
+
+[[dependencies.${mod_id}]]
+    modId="forge"
+    mandatory=true
+    versionRange="${forge_version_range}"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="${minecraft_version_range}"
+    ordering="NONE"
+    side="BOTH"
