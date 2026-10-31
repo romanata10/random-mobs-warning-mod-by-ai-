@@ -77,3 +77,62 @@ jobs:
             Внутри: 13 мобов, 6 блоков, 19 предметов, эффект «заражение корней»,
             3 биома, 3 измерения, 4 структуры и 14 достижений.
           files: build/libs/*.jar
+
+  server-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Prepare run directory
+        run: |
+          mkdir -p run
+          echo "eula=true" > run/eula.txt
+          cat > run/server.properties <<'EOF'
+          online-mode=false
+          level-name=world
+          level-seed=1337
+          max-tick-time=-1
+          spawn-protection=0
+          view-distance=6
+          sync-chunk-writes=false
+          EOF
+
+      - name: Run dedicated server (world creation smoke test)
+        run: |
+          chmod +x ./gradlew
+          timeout -s KILL 480 ./gradlew runServer --no-daemon --console=plain > server-run.log 2>&1 || true
+          echo "gradle run finished"
+          ls -la run || true
+          ls -la run/logs || true
+
+      - name: Report server log as annotations
+        if: always()
+        run: |
+          set +e
+          LOG=server-run.log
+          if [ -f run/logs/latest.log ]; then cp run/logs/latest.log latest-server.log; LOG=latest-server.log; fi
+          echo "log: $LOG size $(wc -c < "$LOG" 2>/dev/null) bytes"
+          if [ -d run/crash-reports ]; then
+            for f in run/crash-reports/*; do
+              echo "::error title=CrashReport $(basename "$f")::$(head -c 5000 "$f" | tr '\n' '|' | sed 's/\r//g')"
+            done
+          fi
+          if [ -f "$LOG" ]; then
+            msg=$(grep -n -iE "Failed to load datapacks|Couldn't parse|Failed to parse|Caused by|Exception|Unknown field|error|Done \(" "$LOG" | head -n 60 | tr '\n' '|' | cut -c1-6000)
+            echo "::error title=ServerLogGrep::$msg"
+            echo "::error title=ServerLogTail::$(tail -c 5000 "$LOG" | tr '\n' '|' | sed 's/\r//g')"
+          else
+            echo "::error title=NoLog::no server log produced"
+            echo "::error title=GradleLog::$(tail -c 5000 server-run.log | tr '\n' '|' | sed 's/\r//g')"
+          fi
+
