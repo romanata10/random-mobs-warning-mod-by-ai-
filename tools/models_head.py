@@ -69,6 +69,28 @@ def aim_local(parent_rot, world_direction):
     return aim(local)
 
 
+def rings(cx, cz, base_top, height, r0, r1, count, color, style="sand", curve=(0.0, 0.0),
+          groove=None, face=None, pivot=0.0):
+    """Stack of rounded, tapering rings — worm / tail / trunk bodies."""
+    boxes = []
+    step = height / float(max(1, count - 1)) if count > 1 else height
+    for i in range(count):
+        t = i / float(max(1, count - 1)) if count > 1 else 1.0
+        top = base_top + height * t
+        w = max(2, int(round((r0 + (r1 - r0) * t) * 2)))
+        dx = int(round(curve[0] * t * t))
+        dz = int(round(curve[1] * t * t))
+        thick = max(2, int(round(step * 16)) + 1)
+        col = color if (i % 2 == 0 or not groove) else groove
+        y = up(top) - up(pivot)
+        boxes.append(box(cx + dx - w // 2, y, cz + dz - w // 2, w, thick, w,
+                         col, style, face=face))
+        w2 = max(2, int(round(w * 0.72)))
+        boxes.append(box(cx + dx - w2 // 2, y - 1, cz + dz - w2 // 2, w2, 2, w2,
+                         col, style))
+    return boxes
+
+
 def blk(pivot_blocks, x, top_blocks, z, w, thick_blocks, d, color, style="noise",
         face=None, glow=False):
     """Box addressed by world height: `top_blocks` is where its top edge sits, and
@@ -162,23 +184,39 @@ GROUND = 24.0
 
 
 def _leg(name, hip, knee, foot, thick, upper_color, lower_color, style, anim, claw):
+    """Two-segment leg. Each segment is built from a few tapered blocks so limbs read
+    as bone/flesh instead of a single stick, and a joint ball hides the seam."""
     up_len = max(1.0, _len(_sub(knee, hip)))
     low_len = max(1.0, _len(_sub(foot, knee)))
     thigh_rot = aim(_sub(knee, hip))
     shin_rot = aim_local(thigh_rot, _sub(foot, knee))
+    t = max(2, int(thick))
+    head_w = t + 2
     parts = [
         part(name, hip, [
-            box(-thick // 2, 0, -thick // 2, thick, up_len, thick, upper_color, style),
-            box(-thick // 2 - 1, up_len * 0.25, -thick // 2 - 1, thick + 2, max(2, thick // 2),
-                thick + 2, upper_color, style),
+            # hip socket
+            box(-head_w // 2, 0, -head_w // 2, head_w, max(2, up_len * 0.16), head_w,
+                upper_color, style),
+            # upper segment tapering towards the knee
+            box(-t // 2, up_len * 0.12, -t // 2, t, max(2, up_len * 0.5), t, upper_color, style),
+            box(-t // 2 + 1, up_len * 0.58, -t // 2 + 1, max(1, t - 2), max(2, up_len * 0.3),
+                max(1, t - 2), upper_color, style),
+            # knee ball
+            box(-(t + 1) // 2, up_len - max(2, t), -(t + 1) // 2, t + 1, max(2, t), t + 1,
+                lower_color, style),
         ], rot=thigh_rot, anim=anim),
-        part(name + "_low", (hip[0], hip[1] + up_len, hip[2]),
-             [box(-thick // 2 + 1, 0, -thick // 2 + 1, max(1, thick - 1), low_len, max(1, thick - 1),
-                  lower_color, style)]
-             + ([box(-2, low_len - 2, -2, 4, 3, 4, lower_color, "bone"),
-                 box(-3, low_len, -2, 2, 3, 2, lower_color, "bone"),
-                 box(1, low_len, -2, 2, 3, 2, lower_color, "bone")] if claw else []),
-             parent=name, rot=shin_rot, anim=anim + "_low"),
+        part(name + "_low", (knee[0], knee[1], knee[2]), [
+            box(-t // 2, 0, -t // 2, t, max(2, low_len * 0.45), t, lower_color, style),
+            box(-t // 2 + 1, low_len * 0.4, -t // 2 + 1, max(1, t - 2), max(2, low_len * 0.4),
+                max(1, t - 2), lower_color, style),
+            box(-t // 2 + 1, low_len - max(2, t), -t // 2 + 1, max(1, t - 2), max(2, t),
+                max(1, t - 2), lower_color, style),
+        ] + ([
+            box(-2, low_len - 3, -3, 4, 3, 6, lower_color, "bone"),
+            box(-3, low_len, -3, 2, 3, 4, lower_color, "bone"),
+            box(1, low_len, -3, 2, 3, 4, lower_color, "bone"),
+        ] if claw else []),
+            parent=name, rot=shin_rot, anim=anim + "_low"),
     ]
     return parts
 
@@ -188,24 +226,27 @@ def leg(name, x, y, z, upper, lower, thick, upper_color, lower_color, style="chi
     """Knee-bent two segment leg: it keeps the authored lengths, only adds a knee."""
     side = -1.0 if x < 0 else 1.0
     reach = max(1.0, thick * 0.55) + abs(out)
-    knee = (x + side * reach, y + upper * 0.9, z + spread * 0.5)
-    foot = (x + side * (reach + max(1.0, thick * 0.45)), y + (upper + lower) * 0.92, z + spread)
+    # the knee always stays above the ground plane, and the shin lands on it
+    knee = (x + side * reach, min(y + upper * 0.9, GROUND - max(3.0, lower * 0.7)),
+            z + spread * 0.5)
+    foot = (x + side * (reach + max(1.0, thick * 0.45)), GROUND, z + spread)
     return _leg(name, (x, y, z), knee, foot, thick, upper_color, lower_color, style, anim, claw)
 
 
 def spider_legs(prefix, pivot_y, radius_x, radius_z, upper, lower, thick,
-                upper_color, lower_color, style="chitin", anim="leg", knee_lift=0.0):
+                upper_color, lower_color, style="chitin", anim="leg", knee_lift=0.0,
+                z_shift=0.0):
     """Eight harvestman legs: they rise to a high knee, then fold out and down."""
     parts = []
     for side, sx in (("l", -1), ("r", 1)):
         for i, (ang, zoff) in enumerate(((-40, -5), (-17, -2), (17, 2), (40, 5))):
             x = sx * radius_x
-            z = zoff * (radius_z / 5.0)
+            z = zoff * (radius_z / 5.0) + z_shift
             name = "%s_%s%d" % (prefix, side, i)
             hip = (x, pivot_y, z)
-            knee = (x + sx * (radius_x * 1.35 + 4), pivot_y - upper * 0.08 - knee_lift,
+            knee = (x + sx * (radius_x * 1.05 + 3), pivot_y - max(1.0, knee_lift),
                     z + zoff * 1.1)
-            foot = (x + sx * (radius_x * 2.5 + 9), GROUND, z + zoff * 2.4)
+            foot = (x + sx * (radius_x * 2.2 + 8), GROUND, z + zoff * 2.4)
             parts += _leg(name, hip, knee, foot, thick, upper_color, lower_color, style, anim, True)
     return parts
 
