@@ -23,6 +23,11 @@ def part(name, pivot, boxes, parent=None, rot=None, anim=None):
             "rot": rot, "anim": anim}
 
 
+def up(blocks):
+    """Model-space y of a height given in blocks above the feet."""
+    return GROUND - blocks * 16.0
+
+
 # ------------------------------------------------------------------ aiming helpers
 def _norm(v):
     length = math.sqrt(sum(c * c for c in v)) or 1.0
@@ -98,6 +103,81 @@ def blk(pivot_blocks, x, top_blocks, z, w, thick_blocks, d, color, style="noise"
     height = max(1, int(round(thick_blocks * 16)))
     y = int(round(up(top_blocks) - up(pivot_blocks)))
     return box(x, y, z, w, height, d, color, style, face=face, glow=glow)
+
+
+def hull(pivot_blocks, x, top_blocks, z, w, thick_blocks, d, color, style="noise",
+         cut=3, face=None, glow=False):
+    """Octagonal volume: a box with its four vertical corners cut away, so the silhouette
+    reads round instead of cubic. Same arguments as blk(); returns a list of boxes."""
+    height = max(1, int(round(thick_blocks * 16)))
+    y = int(round(up(top_blocks) - up(pivot_blocks)))
+    c = max(1, min(int(cut), max(1, w // 3), max(1, d // 3)))
+    out = [box(x + c, y, z + c, w - 2 * c, height, d - 2 * c, color, style,
+               face=face, glow=glow)]
+    out.append(box(x, y, z + c, c, height, d - 2 * c, color, style))
+    out.append(box(x + w - c, y, z + c, c, height, d - 2 * c, color, style))
+    out.append(box(x + c, y, z, w - 2 * c, height, c, color, style))
+    out.append(box(x + c, y, z + d - c, w - 2 * c, height, c, color, style))
+    return out
+
+
+def dome(pivot_blocks, x, top_blocks, z, w, thick_blocks, d, color, style="noise",
+         steps=3, face=None):
+    """Stacked shrinking slabs — a rounded shell, hat or lid."""
+    out = []
+    step_h = thick_blocks / float(max(1, steps))
+    for i in range(steps):
+        k = (i + 0.5) / steps                       # 0 bottom .. 1 top
+        shrink = int(round(k * min(w, d) * 0.28))
+        top = top_blocks + step_h * (steps - i)
+        out += hull(pivot_blocks, x + shrink, top, z + shrink, w - 2 * shrink,
+                    step_h * 1.05, d - 2 * shrink, color, style,
+                    cut=max(1, (w - 2 * shrink) // 6),
+                    face=face if i == steps - 1 else None)
+    return out
+
+
+def cone(cx, cy, cz, w, h, color, style="bone", steps=4, d=None, face=None, glow=False,
+         pivot=None):
+    """Tapering spike / horn / tooth: base at (cx, cy, cz), growing upwards (-y).
+    Pass ``pivot`` (the part's pivot height in blocks) inside a nested part."""
+    d = w if d is None else d
+    if pivot is not None:
+        cy = cy - up(pivot)
+    out = []
+    for i in range(steps):
+        k = i / float(max(1, steps))
+        cw = max(1, int(round(w * (1.0 - 0.72 * k))))
+        cd = max(1, int(round(d * (1.0 - 0.72 * k))))
+        step = max(1, int(round(h / steps)))
+        out.append(box(cx - cw // 2, int(round(cy - h * k)) - step, cz - cd // 2,
+                       cw, step + 1, cd, color, style,
+                       face=face if i == 0 else None, glow=glow))
+    return out
+
+
+def skull(pivot_blocks, x, top_blocks, z, w, thick_blocks, d, color, style="bone",
+          eye="#c9ff8a", glow=True, jaw=True):
+    """Chamfered head with a brow ridge, sunken eye sockets and a jaw."""
+    out = hull(pivot_blocks, x, top_blocks, z, w, thick_blocks, d, color, style,
+               cut=max(2, w // 5), face="skull")
+    out.append(box(x + 1, int(round(up(top_blocks) - up(pivot_blocks))), z - 1,
+                   w - 2, max(1, int(round(thick_blocks * 16 * 0.22))), 2, color, style))
+    # eye sockets sit under the brow
+    ey = int(round(up(top_blocks - thick_blocks * 0.3) - up(pivot_blocks)))
+    out.append(box(x + 2, ey, z - 1, max(1, w // 4), max(1, int(thick_blocks * 3)),
+                   1, "#1b1a18", "cloth"))
+    out.append(box(x + w - 2 - max(1, w // 4), ey, z - 1, max(1, w // 4),
+                   max(1, int(thick_blocks * 3)), 1, "#1b1a18", "cloth"))
+    out.append(box(x + 3, ey + 1, z - 1, max(1, w // 6), max(1, int(thick_blocks * 2)),
+                   1, eye, "lens", glow=glow))
+    out.append(box(x + w - 3 - max(1, w // 6), ey + 1, z - 1, max(1, w // 6),
+                   max(1, int(thick_blocks * 2)), 1, eye, "lens", glow=glow))
+    if jaw:
+        out.append(box(x + 2, int(round(up(top_blocks - thick_blocks) - up(pivot_blocks))),
+                       z + 1, w - 4, max(2, int(round(thick_blocks * 16 * 0.34))), 3,
+                       color, style))
+    return out
 
 
 # ------------------------------------------------------------------ detail helpers
@@ -231,6 +311,16 @@ def leg(name, x, y, z, upper, lower, thick, upper_color, lower_color, style="chi
             z + spread * 0.5)
     foot = (x + side * (reach + max(1.0, thick * 0.45)), GROUND, z + spread)
     return _leg(name, (x, y, z), knee, foot, thick, upper_color, lower_color, style, anim, claw)
+
+
+def arm(name, x, y, z, upper, lower, thick, color, lower_color=None, side=None,
+        out=2.0, fwd=0.0, style="cloth", anim="arm", claw=False):
+    """Hanging arm with an elbow: same machinery as a leg, but it never reaches the floor."""
+    side = (-1.0 if x < 0 else 1.0) if side is None else side
+    elbow = (x + side * out, y + upper, z + fwd * 0.5)
+    hand = (x + side * (out + 1.5), y + upper + lower, z + fwd)
+    return _leg(name, (x, y, z), elbow, hand, thick, color,
+                lower_color or color, style, anim, claw)
 
 
 def spider_legs(prefix, pivot_y, radius_x, radius_z, upper, lower, thick,
