@@ -69,7 +69,7 @@ def fbm(x, y, seed=0, freq=4.0, octaves=2):
     return total / weight
 
 
-def boost(color, sat=1.18, lum=1.06):
+def boost(color, sat=1.26, lum=1.05):
     """A little more punch: saturation up, brightness slightly up."""
     r, g, b = color
     grey = (r + g + b) / 3.0
@@ -146,6 +146,9 @@ def material_px(style, base, x, y, w, h, rng):
             c = mix(c, light, 0.7)                  # rivet
         if style == "milmetal" and fbm(x, y, 44, 3.0) > 0.72:
             c = mix(c, (86, 92, 62), 0.35)          # camouflage blotch
+        rust = fbm(x, y, 61, 6.0)
+        if rust > 0.84:
+            c = mix(c, (122, 68, 38), 0.35 + 0.25 * (rust - 0.84) * 6.0)
         if _edge_wear(x, y, w, h) > 0.7:
             c = mix(c, light, 0.35)
         return shade(c, 1.0 + rng.uniform(-0.04, 0.04))
@@ -199,6 +202,8 @@ def material_px(style, base, x, y, w, h, rng):
         return shade(c, 1.0 + rng.uniform(-0.05, 0.05))
 
     if style == "skin":
+        if fbm(x * 0.6, y * 0.6, 5, 9.0) > 0.63:
+            base = shade(base, 0.88)                      # pigment blotch
         pores = fbm(x, y, 53, 3.2)
         c = tone(base, 0.14 - 0.3 * t + (pores - 0.5) * 0.3)
         if (x * 7 + y * 3) % 29 == 0:
@@ -285,6 +290,11 @@ def material_px(style, base, x, y, w, h, rng):
         c = shade(base, weave + n1 * 0.1)
         if y % 11 == 0:
             c = shade(c, 0.84)                      # fold shadow
+        fold = math.sin((x * 0.5 + y * 0.9) * 0.7)
+        if fold > 0.86:
+            c = mix(c, light, 0.3)                  # fold highlight
+        elif fold < -0.9:
+            c = shade(c, 0.86)
         if _edge_wear(x, y, w, h) > 0.7:
             c = mix(c, light, 0.22)                 # frayed hem
         return shade(c, 1.0 + rng.uniform(-0.04, 0.04))
@@ -666,12 +676,16 @@ def face_rects(u, v, w, h, d):
     }
 
 
+BAYER4 = ((0, 8, 2, 10), (12, 4, 14, 6), (3, 11, 1, 9), (15, 7, 13, 5))
+
+
 def paint_box(img, u, v, w, h, d, spec, rng):
     base = hex_rgb(spec["color"])
     style = spec.get("style", "noise")
     face = spec.get("face")
     glow = spec.get("glow", False)
     px = img.load()
+    tint = (rng.uniform(-4.0, 4.0), rng.uniform(-3.0, 3.5), rng.uniform(-3.0, 4.5))
 
     faces = face_rects(u, v, w, h, d)
     # hoisted out of the per-pixel loop: the light each face receives
@@ -696,7 +710,14 @@ def paint_box(img, u, v, w, h, d, spec, rng):
                 c = shade(c, ao * lit)
                 if edge == 0:
                     c = mix(c, (255, 255, 255), 0.1)      # bevelled rim light
-                px[fx + xx, fy + yy] = boost(clamp(c)) + (255,)
+                elif edge == 1:
+                    c = shade(c, 0.94)                    # inner shadow line
+                c = boost(clamp(c))
+                # ordered dither keeps big faces from banding, and a per-box tint drift
+                # makes neighbouring cubes read as separate hand-painted pieces
+                dith = (BAYER4[yy & 3][xx & 3] / 16.0 - 0.5) * 7.0
+                c = clamp((c[0] + dith + tint[0], c[1] + dith + tint[1], c[2] + dith + tint[2]))
+                px[fx + xx, fy + yy] = c + (255,)
 
     draw = ImageDraw.Draw(img)
     edge = clamp(shade(base, 0.55)) + (190,)
@@ -743,6 +764,7 @@ ANIM_LINES = {
     "jaw": "Anims.jaw(part, ageInTicks, 0.18F);",
     "bob": "Anims.bob(part, ageInTicks, 0.45F);",
     "rotor": "Anims.spin(part, ageInTicks, 0.35F);",
+    "spin": "Anims.spin(part, ageInTicks, 0.12F);",
     "eye": "Anims.pulse(part, ageInTicks, 0.06F);",
 }
 
