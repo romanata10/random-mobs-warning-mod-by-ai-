@@ -546,6 +546,109 @@ def draw_face(kind, draw, x0, y0, w, h, base, rng):
     if kind == "jaw":
         rect(x0, y0 + h // 2, w, max(1, h // 3), (28, 20, 16))
         return
+    if kind in ("wall", "roof"):
+        if kind == "roof":
+            for yy in range(y0, y0 + h, 4):
+                rect(x0, yy, w, 1, shade(base, 0.7))
+                for xx in range(x0 + ((yy // 4) % 2) * 3, x0 + w, 6):
+                    rect(xx, yy + 1, 1, 3, shade(base, 0.82))
+        else:
+            for xx in range(x0, x0 + w, 6):
+                rect(xx, y0, 1, h, shade(base, 0.68))
+            rect(x0, y0, w, 1, shade(base, 0.6))
+            rect(x0, y0 + h - 1, w, 1, shade(base, 0.6))
+        return
+    if kind == "face":
+        # living house: two lit windows and a door mouth
+        for wx in (x0 + w // 5, x0 + w - w // 5 - max(2, w // 6)):
+            rect(wx, y0 + h // 4, max(2, w // 6), max(2, h // 4), (34, 24, 14))
+            rect(wx + 1, y0 + h // 4 + 1, max(1, w // 6 - 2), max(1, h // 4 - 2), (255, 206, 96))
+        rect(cx - max(2, w // 8), cy + h // 6, max(3, w // 4), max(3, h // 4), (30, 18, 12))
+        for i in range(0, w, 3):
+            draw.line([(x0 + i, cy + h // 6), (x0 + i, cy + h // 6 + max(3, h // 4))],
+                      fill=(72, 52, 30, 255))
+        return
+    if kind in ("windows", "dome", "radar", "board", "screen"):
+        if kind == "windows":
+            for i in range(0, w - 3, 6):
+                rect(x0 + i + 1, cy - max(1, h // 6), 4, max(2, h // 3), (24, 34, 42))
+                rect(x0 + i + 2, cy - max(1, h // 6) + 1, 2, max(1, h // 3 - 2), (150, 200, 230))
+            return
+        if kind == "dome":
+            for i in range(3):
+                rr = max(2, min(w, h) // 2 - i * 3)
+                draw.ellipse([cx - rr, cy - rr, cx + rr, cy + rr],
+                             outline=shade(base, 1.25) + (200,))
+            draw.ellipse([cx - 2, cy - 3, cx + 1, cy], fill=(255, 255, 255, 210))
+            return
+        if kind == "radar":
+            for i in range(3):
+                rr = max(2, min(w, h) // 2 - i * 2)
+                draw.arc([cx - rr, cy - rr, cx + rr, cy + rr], 200, 340,
+                         fill=shade(base, 1.3) + (220,))
+            rect(cx - 1, cy - h // 2, 2, h, shade(base, 0.8))
+            return
+        if kind == "board":
+            for yy in range(y0 + 2, y0 + h - 1, 5):
+                rect(x0 + 1, yy, w - 2, 1, (58, 176, 128))
+                for xx in range(x0 + 2, x0 + w - 2, 9):
+                    rect(xx, yy, 1, 4, (46, 150, 108))
+            for _ in range(max(2, w // 8)):
+                rect(rng.randint(x0 + 1, x0 + w - 2), rng.randint(y0 + 1, y0 + h - 2),
+                     2, 2, (210, 220, 200))
+            return
+        rect(x0, y0, w, h, (10, 26, 24))
+        rect(x0 + 1, y0 + 1, w - 2, max(1, h // 3), (46, 214, 178))
+        for i in range(2, w - 2, 4):
+            rect(x0 + i, y0 + h // 2, 1, max(1, h // 3), (28, 140, 118))
+        return
+    if kind == "scales":
+        for i, yy in enumerate(range(y0 + 1, y0 + h, 3)):
+            off = (i % 2) * 2
+            for xx in range(x0 + 1 + off, x0 + w - 1, 4):
+                rect(xx, yy, 3, 1, shade(base, 1.2))
+                rect(xx, yy + 1, 3, 1, shade(base, 0.8))
+        return
+    if kind == "tree" or kind == "treant":
+        for xx in range(x0 + 2, x0 + w - 1, 5):
+            rect(xx, y0, 1, h, shade(base, 0.72))
+        if kind == "treant":
+            rect(cx - w // 4, cy - h // 5, max(2, w // 8), max(2, h // 6), (18, 12, 8))
+            rect(cx + w // 6, cy - h // 5, max(2, w // 8), max(2, h // 6), (18, 12, 8))
+            rect(cx - w // 8, cy + h // 6, max(3, w // 4), max(1, h // 8), (18, 12, 8))
+        return
+    if kind == "crate":
+        rect(x0, y0, w, 1, shade(base, 1.2))
+        rect(x0, y0 + h - 1, w, 1, shade(base, 0.7))
+        for i in range(min(w, h)):
+            rect(x0 + i, y0 + i, 1, 1, shade(base, 0.75))
+            rect(x0 + w - 1 - i, y0 + i, 1, 1, shade(base, 0.75))
+        rect(x0 + w // 2 - 1, y0, 2, h, shade(base, 0.85))
+        return
+    if kind == "rags":
+        for i in range(0, w, 3):
+            top = y0 + rng.randint(0, max(1, h // 3))
+            rect(x0 + i, top, 2, y0 + h - top, shade(base, rng.uniform(0.7, 1.15)))
+        return
+    if kind in ("lock", "claw"):
+        if kind == "lock":
+            rect(cx - w // 3, cy - h // 4, max(3, w // 2), max(3, h // 2), (150, 150, 158))
+            rect(cx - 1, cy - 1, 2, 3, (20, 20, 22))
+            rect(cx - 1, cy + 2, 2, 2, (20, 20, 22))
+        else:
+            for i in range(1, w - 1, 3):
+                draw.polygon([(x0 + i, y0 + h), (x0 + i + 1, y0 + h - max(2, h // 3)),
+                              (x0 + i + 2, y0 + h)], fill=(230, 232, 225, 255))
+        return
+    if kind in ("funnel", "trident"):
+        if kind == "funnel":
+            for i in range(0, w, 4):
+                rect(x0 + i, y0, 1, h, shade(base, 0.86))
+        else:
+            rect(cx - 1, cy - h // 3, 2, h * 2 // 3, (230, 240, 235))
+            rect(cx - w // 4, cy - h // 3, 2, h // 3, (230, 240, 235))
+            rect(cx + w // 4 - 2, cy - h // 3, 2, h // 3, (230, 240, 235))
+        return
 
 
 def face_rects(u, v, w, h, d):
